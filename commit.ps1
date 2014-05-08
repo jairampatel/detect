@@ -13,6 +13,8 @@ else{
     git commit -m $($argsList)
 }
 
+git push heroku master
 git push origin master
+
 
 (new-object Media.SoundPlayer "C:\WINDOWS\Media\notify.wav").play();
