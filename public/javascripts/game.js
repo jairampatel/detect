@@ -1,10 +1,14 @@
 var canvas;
 var ctx;
 
+var WIDTH = 512;
+var HEIGHT = 480;
 
 var keysDown = {};
 var mouseX = -1;
 var mouseY = -1;
+
+var then = Date.now();
 
 var me = {
 	speed: 256, // movement in pixels per second
@@ -18,37 +22,39 @@ function createCanvas(){
 	canvas = document.createElement("canvas");
 	canvas.setAttribute("id","myCanvas")
 	ctx = canvas.getContext("2d");
-	canvas.width = 512;
-	canvas.height = 480;
+	canvas.width = WIDTH;
+	canvas.height = HEIGHT;
 	canvas.style.background = "#ffffff"
 	canvas.style.border="1px solid #000000";
 	document.getElementById("game").appendChild(canvas);
 }
 
 function setMePosition(x,y){
-	me[bodyX] = x;
-	me[bodyY] = y;
+	me.bodyX = x;
+	me.bodyY = y;
 }
 
 function drawFront(){
 	ctx.beginPath();
-	ctx.arc(me[bodyX],me[bodyY] - 21,4,0,2*Math.PI);
+	ctx.arc(me.bodyX,me.bodyY - 21,4,0,2*Math.PI);
 	ctx.fillStyle="#FFFF66"
 	ctx.fill();
 	ctx.lineWidth=2;
 	ctx.strokeStyle="#FFFF66"	
 	ctx.stroke();
+	ctx.closePath();
 }
 
 function drawBody(){
 	ctx.beginPath();
-	ctx.arc(me[bodyX],me[bodyY],25,0,2*Math.PI);
+	ctx.arc(me.bodyX,me.bodyY,25,0,2*Math.PI);
 	ctx.fillStyle="#00331F";
 	ctx.fill();
 	ctx.lineWidth=2;
 	ctx.strokeStyle="#003300"
 	
 	ctx.stroke();
+	ctx.closePath();
 
 	drawFront();
 }
@@ -87,63 +93,31 @@ function setUp(){
 	drawBody();
 }
 
-
-
-
-
-
-
-
-// Reset the game when the player catches a monster
-var reset = function () {
-	hero.x = canvas.width / 2;
-	hero.y = canvas.height / 2;
-
-	// Throw the monster somewhere on the screen randomly
-	monster.x = 32 + (Math.random() * (canvas.width - 64));
-	monster.y = 32 + (Math.random() * (canvas.height - 64));
-};
-
 // Update game objects
 var update = function (modifier) {
 	if (38 in keysDown) { // Player holding up
-		me.y -= hero.speed * modifier;
+		me.bodyY -= me.speed * modifier;
 	}
 	if (40 in keysDown) { // Player holding down
-		me.y += hero.speed * modifier;
+		me.bodyY += me.speed * modifier;
 	}
 	if (37 in keysDown) { // Player holding left
-		me.x -= hero.speed * modifier;
+		me.bodyX -= me.speed * modifier;
 	}
 	if (39 in keysDown) { // Player holding right
-		me.x += hero.speed * modifier;
+		me.bodyX += me.speed * modifier;
 	}
 };
 
 // Draw everything
 var render = function () {
-	if (bgReady) {
-		ctx.drawImage(bgImage, 0, 0);
-	}
-
-	if (heroReady) {
-		ctx.drawImage(heroImage, hero.x, hero.y);
-	}
-
-	if (monsterReady) {
-		ctx.drawImage(monsterImage, monster.x, monster.y);
-	}
-
-	// Score
-	ctx.fillStyle = "rgb(250, 250, 250)";
-	ctx.font = "24px Helvetica";
-	ctx.textAlign = "left";
-	ctx.textBaseline = "top";
-	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
+	ctx.clearRect(0, 0, WIDTH, HEIGHT);
+	drawBody();
 };
 
 // The main game loop
-var main = function () {
+var main = function () {	
+
 	var now = Date.now();
 	var delta = now - then;
 
@@ -158,13 +132,10 @@ var main = function () {
 
 function startGame(){
 	setUp();
+	main();
 	
 }
+
 // Cross-browser support for requestAnimationFrame
 var w = window;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
-
-// Let's play this game!
-var then = Date.now();
-reset();
-main();
