@@ -3,6 +3,7 @@ var ctx;
 
 var WIDTH = 512;
 var HEIGHT = 480;
+var BODY_RADIUS = 25;
 
 var keysDown = {};
 var mouseX = -1;
@@ -35,8 +36,17 @@ function setMePosition(x,y){
 }
 
 function drawFront(){
+
+	var deltaX = mouseX - me.bodyX;
+	var deltaY = mouseY - me.bodyY;
+	var angle = Math.atan2(deltaY,deltaX);
+
+	//console.log('angle is: ' + angle + ' radians');
+	var x = (BODY_RADIUS-2) * Math.cos(angle);
+	var y = (BODY_RADIUS-2) * Math.sin(angle);
+
 	ctx.beginPath();
-	ctx.arc(me.bodyX,me.bodyY - 21,4,0,2*Math.PI);
+	ctx.arc(me.bodyX + x,me.bodyY + y,4,0,2*Math.PI);
 	ctx.fillStyle="#FFFF66"
 	ctx.fill();
 	ctx.lineWidth=2;
@@ -47,7 +57,7 @@ function drawFront(){
 
 function drawBody(){
 	ctx.beginPath();
-	ctx.arc(me.bodyX,me.bodyY,25,0,2*Math.PI);
+	ctx.arc(me.bodyX,me.bodyY,BODY_RADIUS,0,2*Math.PI);
 	ctx.fillStyle="#00331F";
 	ctx.fill();
 	ctx.lineWidth=2;
@@ -78,11 +88,22 @@ function addListeners(){
 	}, false);
 
 	$('#myCanvas').mousemove(function(event) {
-		mouseX = event.pageX;
-		mouseY = event.pageY;
-	  var msg = 'mousemove() position - x : ' + event.pageX + ', y : '
-	                + event.pageY;
-	  //console.log(msg);
+		
+	  	
+
+	  	var parentOffset = $(this).parent().offset(); 
+	   	//or $(this).offset(); if you really just want the current element's offset
+	   	var relX = event.pageX - parentOffset.left;
+	   	var relY = event.pageY - parentOffset.top;
+
+	   	mouseX = relX;
+		mouseY = relY;
+
+
+	  	var msg = 'mousemove() position - x : ' + relX + ', y : '
+	                + relY;
+	    
+	  	//console.log(msg);
 	});
 }
 function setUp(){
@@ -95,17 +116,19 @@ function setUp(){
 
 // Update game objects
 var update = function (modifier) {
-	if (38 in keysDown) { // Player holding up
-		me.bodyY -= me.speed * modifier;
+
+	var delta = me.speed * modifier;
+	if ((87 in keysDown || 38 in keysDown) && me.bodyY - delta - BODY_RADIUS >= 0) { // Player holding up
+		me.bodyY -= delta;
 	}
-	if (40 in keysDown) { // Player holding down
-		me.bodyY += me.speed * modifier;
+	if ((83 in keysDown || 40 in keysDown) && me.bodyY + delta + BODY_RADIUS < HEIGHT) { // Player holding down
+		me.bodyY += delta;
 	}
-	if (37 in keysDown) { // Player holding left
-		me.bodyX -= me.speed * modifier;
+	if ((65 in keysDown || 37 in keysDown) && me.bodyX - delta - BODY_RADIUS >= 0) { // Player holding left
+		me.bodyX -= delta;
 	}
-	if (39 in keysDown) { // Player holding right
-		me.bodyX += me.speed * modifier;
+	if ((68 in keysDown || 39 in keysDown) && me.bodyX + delta + BODY_RADIUS < WIDTH) { // Player holding right
+		me.bodyX += delta;
 	}
 };
 
