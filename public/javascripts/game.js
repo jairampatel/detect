@@ -19,22 +19,9 @@ var me = {
 	frontY: -1
 };
 
-function createCanvas(){
-	canvas = document.createElement("canvas");
-	canvas.setAttribute("id","myCanvas")
-	ctx = canvas.getContext("2d");
-	canvas.width = WIDTH;
-	canvas.height = HEIGHT;
-	canvas.style.background = "#ffffff"
-	canvas.style.border="1px solid #000000";
-	document.getElementById("game").appendChild(canvas);
+function drawBarriers(){
+	
 }
-
-function setMePosition(x,y){
-	me.bodyX = x;
-	me.bodyY = y;
-}
-
 function drawFront(){
 
 	var deltaX = mouseX - me.bodyX;
@@ -70,72 +57,26 @@ function drawBody(){
 }
 
 function render(){
-
+	ctx.clearRect(0, 0, WIDTH, HEIGHT);
 	drawBody();
-}
-function mainLoop(){
-
-	render();
+	drawBarriers();
 }
 
-function addListeners(){
-	addEventListener("keydown", function (e) {
-		keysDown[e.keyCode] = true;
-	}, false);
-
-	addEventListener("keyup", function (e) {
-		delete keysDown[e.keyCode];
-	}, false);
-
-	$('#myCanvas').mousemove(function(event) {
-		
-	  	
-
-	  	var parentOffset = $(this).parent().offset(); 
-	   	//or $(this).offset(); if you really just want the current element's offset
-	   	var relX = event.pageX - parentOffset.left;
-	   	var relY = event.pageY - parentOffset.top;
-
-	   	mouseX = relX;
-		mouseY = relY;
-
-
-	  	var msg = 'mousemove() position - x : ' + relX + ', y : '
-	                + relY;
-	    
-	  	//console.log(msg);
-	});
-}
-function setUp(){
-	createCanvas();
-	addListeners();
-
-	setMePosition(canvas.width/2, canvas.height/2);
-	drawBody();
-}
-
-// Update game objects
 var update = function (modifier) {
 
 	var delta = me.speed * modifier;
-	if ((87 in keysDown || 38 in keysDown) && me.bodyY - delta - BODY_RADIUS >= 0) { // Player holding up
+	if ((87 in keysDown || 38 in keysDown) && me.bodyY - delta - BODY_RADIUS >= 0) { // up
 		me.bodyY -= delta;
 	}
-	if ((83 in keysDown || 40 in keysDown) && me.bodyY + delta + BODY_RADIUS < HEIGHT) { // Player holding down
+	if ((83 in keysDown || 40 in keysDown) && me.bodyY + delta + BODY_RADIUS < HEIGHT) { // down
 		me.bodyY += delta;
 	}
-	if ((65 in keysDown || 37 in keysDown) && me.bodyX - delta - BODY_RADIUS >= 0) { // Player holding left
+	if ((65 in keysDown || 37 in keysDown) && me.bodyX - delta - BODY_RADIUS >= 0) { // left
 		me.bodyX -= delta;
 	}
-	if ((68 in keysDown || 39 in keysDown) && me.bodyX + delta + BODY_RADIUS < WIDTH) { // Player holding right
+	if ((68 in keysDown || 39 in keysDown) && me.bodyX + delta + BODY_RADIUS < WIDTH) { // right
 		me.bodyX += delta;
 	}
-};
-
-// Draw everything
-var render = function () {
-	ctx.clearRect(0, 0, WIDTH, HEIGHT);
-	drawBody();
 };
 
 // The main game loop
@@ -153,10 +94,59 @@ var main = function () {
 	requestAnimationFrame(main);
 };
 
+function setMePosition(x,y){
+	me.bodyX = x;
+	me.bodyY = y;
+}
+
+function addListeners(){
+	addEventListener("keydown", function (e) {
+		keysDown[e.keyCode] = true;
+	}, false);
+
+	addEventListener("keyup", function (e) {
+		delete keysDown[e.keyCode];
+	}, false);
+
+	$('#myCanvas').mousemove(function(event) {
+
+	  	var parentOffset = $(this).parent().offset(); 
+	   	//or $(this).offset(); if you really just want the current element's offset
+	   	var relX = event.pageX - parentOffset.left;
+	   	var relY = event.pageY - parentOffset.top;
+
+	   	mouseX = relX;
+		mouseY = relY;
+
+	  	var msg = 'mousemove() position - x : ' + relX + ', y : '
+	                + relY;
+	  	//console.log(msg);
+	});
+}
+
+function createCanvas(){
+	canvas = document.createElement("canvas");
+	canvas.setAttribute("id","myCanvas")
+	ctx = canvas.getContext("2d");
+	canvas.width = WIDTH;
+	canvas.height = HEIGHT;
+	canvas.style.background = "#ffffff"
+	canvas.style.border="1px solid #000000";
+	document.getElementById("game").appendChild(canvas);
+}
+
+function setUp(){
+	createCanvas();
+	addListeners();
+
+	setMePosition(canvas.width/2, canvas.height/2);
+	drawBody();
+	drawBarriers();
+}
+
 function startGame(){
 	setUp();
 	main();
-	
 }
 
 // Cross-browser support for requestAnimationFrame
