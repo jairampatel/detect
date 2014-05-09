@@ -14,9 +14,6 @@ var mouseY;
 var me;
 
 var barriers;
-var then = Date.now();
-
-
 
 function drawBarriers(){
 	var index;
@@ -25,11 +22,22 @@ function drawBarriers(){
 	}	
 }
 
-function fire(){
-	// TODO1 add to projectile array
+function fire(x,y){
+	// TODO1 add {direction/slope} to projectile array based on mousePositionX/Y and faceX/Y
 }
+function updateFace(){
+	var deltaX = mouseX - me.bodyX;
+	var deltaY = mouseY - me.bodyY;
+	var angle = Math.atan2(deltaY,deltaX);
 
-function updatePlayer(){
+	//console.log('angle is: ' + angle + ' radians');
+	var x = (BODY_RADIUS-2) * Math.cos(angle);
+	var y = (BODY_RADIUS-2) * Math.sin(angle);
+
+	me.frontX = me.bodyX + x; 
+	me.frontY = me.bodyY + y;
+}
+function updateBody(){
 	var delta = me.speed * SPEED_MODIFER;
 	if ((87 in keysDown || 38 in keysDown) && me.bodyY - delta - BODY_RADIUS >= 0) { // up
 		me.bodyY -= delta;
@@ -44,19 +52,14 @@ function updatePlayer(){
 		me.bodyX += delta;
 	}
 }
+function updatePlayer(){
+	updateBody();
+	updateFace();
+}
 
 function drawFront(){
-
-	var deltaX = mouseX - me.bodyX;
-	var deltaY = mouseY - me.bodyY;
-	var angle = Math.atan2(deltaY,deltaX);
-
-	//console.log('angle is: ' + angle + ' radians');
-	var x = (BODY_RADIUS-2) * Math.cos(angle);
-	var y = (BODY_RADIUS-2) * Math.sin(angle);
-
 	ctx.beginPath();
-	ctx.arc(me.bodyX + x,me.bodyY + y,4,0,2*Math.PI);
+	ctx.arc(me.frontX,me.frontY,4,0,2*Math.PI);
 	ctx.fillStyle="#FFFF66"
 	ctx.fill();
 	ctx.lineWidth=2;
@@ -65,7 +68,7 @@ function drawFront(){
 	ctx.closePath();
 }
 
-function drawBody(){
+function drawPlayer(){
 	ctx.beginPath();
 	ctx.arc(me.bodyX,me.bodyY,BODY_RADIUS,0,2*Math.PI);
 	ctx.fillStyle="#00331F";
@@ -103,8 +106,7 @@ function addListeners(){
 	   	mouseX = relX;
 		mouseY = relY;
 
-  	var msg = 'mousemove() position - x : ' + relX + ', y : '
-	                + relY;
+  		var msg = 'mousemove() position - x : ' + relX + ', y : ' + relY;
 	  	//console.log(msg);
 	});
 }
@@ -122,11 +124,23 @@ function createCanvas(){
 
 function addBarriers(){
 	// TODO1 add barriers
+	barriers.push({
+
+	});
+	barriers.push({
+		
+	});
+	barriers.push({
+		
+	});
+	barriers.push({
+		
+	});
 }
 
 function render(){
 	ctx.clearRect(0, 0, WIDTH, HEIGHT);
-	drawBody();
+	drawPlayer();
 	drawBarriers();
 	drawProjectiles(); // projectile.js
 }
@@ -139,13 +153,8 @@ function update() {
 // The main game loop
 function main() {	
 
-	var now = Date.now();
-	var delta = now - then;
-
-	update(.02);
+	update(SPEED_MODIFER);
 	render();
-
-	then = now;
 
 	requestAnimationFrame(main);
 };
@@ -154,8 +163,8 @@ function initVariables(){
 	projectiles = [];
 	barriers = [];
 	keysDown = {};
-	mouseX = -1;
-	mouseY = -1;
+	mouseX = canvas.width/2;
+	mouseY = canvas.height/2 - 20;
 
 	me = {
 		speed: 128, // movement in pixels per second
@@ -167,12 +176,12 @@ function initVariables(){
 	addBarriers();
 }
 function setUp(){
-	initVariables();
 	createCanvas();
+	initVariables();
 	addListeners();
 
 	setMePosition(canvas.width/2, canvas.height/2);
-	drawBody();
+	drawPlayer();
 	drawBarriers();
 
 	started = true;

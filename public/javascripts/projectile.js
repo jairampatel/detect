@@ -11,7 +11,7 @@ function projectileIntersectsWall(currentProjectile){
 	return false;
 }
 function projectileIntersectsPlayer(currentProjectile){
-	// TODO1
+	// TODO2
 	return false;
 }
 
@@ -43,6 +43,9 @@ function drawProjectiles(){
 
 function updateProjectiles(){
 	for(index = 0;index < projectiles.length;index++){
+		var current = projectiles[index];
+		projectiles[index].positionX += (current.magnitudeX * directionX);
+		projectiles[index].positionY += (current.magnitudeY * directionY);
 		// TODO1 advance the projectile based on direction and velocity
 	}	
 }
