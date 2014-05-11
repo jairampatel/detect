@@ -3,7 +3,7 @@ var ctx;
 var started;
 
 var WIDTH = 512;
-var HEIGHT = 480;
+var HEIGHT = 512;
 var BODY_RADIUS = 25;
 var SPEED_MODIFER = 0.02;
 
@@ -18,12 +18,40 @@ var barriers;
 function drawBarriers(){
 	var index;
 	for(index = 0;index < barriers.length;index++){
-		// TODO1 draw barriers
+		ctx.fillStyle="#000000";
+		ctx.fillRect(barriers[index].x,barriers[index].y,barriers[index].width,barriers[index].height);
 	}	
 }
 
 function fire(x,y){
 	// TODO1 add {direction/slope} to projectile array based on mousePositionX/Y and faceX/Y
+}
+function touchingWall(){
+	if((me.bodyY - delta - BODY_RADIUS >= 0) &&
+		(me.bodyY + delta + BODY_RADIUS < HEIGHT) &&
+		 (me.bodyX - delta - BODY_RADIUS >= 0) &&
+		  (me.bodyX + delta + BODY_RADIUS < WIDTH))){
+		return false;
+	}
+	return true;
+}
+function bodyIntersectsBarrier(barrier){
+	
+}
+function touchingBarriers(){
+	var index;
+	for(index = 0;index < barriers.length;index++){
+		if(bodyIntersectsBarrier(barriers[index])){
+			return true;
+		}
+	}
+	return false;
+}
+function canMove(){
+	if(!touchingWall() && !touchingBarriers()){
+		return true;
+	}
+	return false;
 }
 function updateFace(){
 	var deltaX = mouseX - me.bodyX;
@@ -39,22 +67,24 @@ function updateFace(){
 }
 function updateBody(){
 	var delta = me.speed * SPEED_MODIFER;
-	if ((87 in keysDown || 38 in keysDown) && me.bodyY - delta - BODY_RADIUS >= 0) { // up
+	if ((87 in keysDown || 38 in keysDown)) { // up
 		me.bodyY -= delta;
 	}
-	if ((83 in keysDown || 40 in keysDown) && me.bodyY + delta + BODY_RADIUS < HEIGHT) { // down
+	if ((83 in keysDown || 40 in keysDown)) { // down
 		me.bodyY += delta;
 	}
-	if ((65 in keysDown || 37 in keysDown) && me.bodyX - delta - BODY_RADIUS >= 0) { // left
+	if ((65 in keysDown || 37 in keysDown)) { // left
 		me.bodyX -= delta;
 	}
-	if ((68 in keysDown || 39 in keysDown) && me.bodyX + delta + BODY_RADIUS < WIDTH) { // right
+	if ((68 in keysDown || 39 in keysDown)) { // right
 		me.bodyX += delta;
 	}
 }
 function updatePlayer(){
-	updateBody();
-	updateFace();
+	if(canMove()){
+		updateBody();
+		updateFace();
+	}
 }
 
 function drawFront(){
@@ -123,18 +153,29 @@ function createCanvas(){
 }
 
 function addBarriers(){
-	// TODO1 add barriers
 	barriers.push({
-
+		x:WIDTH / 6,
+		y:HEIGHT / 6,
+		width:100,
+		height:10
 	});
 	barriers.push({
-		
+		x:WIDTH * 4 / 6,
+		y:HEIGHT * 2 / 6,
+		width:100,
+		height:10
 	});
 	barriers.push({
-		
+		x:WIDTH * 4 / 6,
+		y:HEIGHT * 4 / 6,
+		width:100,
+		height:10
 	});
 	barriers.push({
-		
+		x:WIDTH / 6,
+		y:HEIGHT * 5 / 6,
+		width:100,
+		height:10
 	});
 }
 
