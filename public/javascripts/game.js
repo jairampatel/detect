@@ -47,12 +47,10 @@ function touchingWall(direction){
 			break;
 		case RIGHT:
 			if(me.bodyX + (me.speed * SPEED_MODIFER) + BODY_RADIUS < WIDTH){
-				console.log('not touching wall');
 				return false;
 			}
 			break;
 	}
-	console.log('touching wall');
 	return true;
 }
 function bodyIntersectsBarrier(barrier,direction){
@@ -61,26 +59,43 @@ function bodyIntersectsBarrier(barrier,direction){
 
 	var diffX = Math.abs(me.bodyX - centerX);
 	var diffY = Math.abs(me.bodyY - centerY);
+	console.log('direction: ' + direction);
+	switch(direction){
+		case UP:
+		case DOWN:
+			if(diffY - (barrier.height / 2) - BODY_RADIUS > 0){
+				return false;
+			}
+			if(diffY < (barrier.height / 2)){
+				return true;
+			}
+			break;
+		case LEFT:
+		case RIGHT:
+			if(diffX - (barrier.width / 2) - BODY_RADIUS > 0){
+				return false;
+			}
+			if(diffX < (barrier.width / 2)){
+				return true;
+			}
+			break;
+	}
+	var cornerDistance_sq = Math.pow(diffX - barrier.width/2,2) +
+                         Math.pow(diffY - barrier.height/2,2);
 
-	if(diffX - (barrier.width / 2) - BODY_RADIUS > 0)
-		return false;
-	if(diffY - (barrier.height / 2) - BODY_RADIUS > 0)
-		return false;
-	console.log('intersects barrier');
-	return true;
+    return (cornerDistance_sq <= Math.pow(RADIUS,2));
 }
 function touchingBarriers(direction){
 	var index;
 	for(index = 0;index < barriers.length;index++){
-		if(bodyIntersectsBarrier(barriers[index]),direction){
+		if(bodyIntersectsBarrier(barriers[index],direction)){
 			return true;
 		}
 	}
-	console.log('not touching barriers');
 	return false;
 }
 function canMove(direction){
-	if(!touchingWall(direction)){
+	if(!touchingWall(direction) && !touchingBarriers(direction)){
 		return true;
 	}
 	return false;
@@ -90,7 +105,6 @@ function updateFace(){
 	var deltaY = mouseY - me.bodyY;
 	var angle = Math.atan2(deltaY,deltaX);
 
-	//console.log('angle is: ' + angle + ' radians');
 	var x = (BODY_RADIUS-2) * Math.cos(angle);
 	var y = (BODY_RADIUS-2) * Math.sin(angle);
 
@@ -114,8 +128,6 @@ function updateBody(){
 	if ((68 in keysDown || 39 in keysDown)) { // right
 		if(canMove(RIGHT))
 			me.bodyX += delta;
-		else
-			console.log('cant move right');
 	}
 }
 
