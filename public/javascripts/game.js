@@ -7,6 +7,11 @@ var HEIGHT = 512;
 var BODY_RADIUS = 25;
 var SPEED_MODIFER = 0.02;
 
+var UP = 0;
+var DOWN = 1;
+var LEFT = 2;
+var RIGHT = 3;
+
 var keysDown;
 var mouseX;
 var mouseY;
@@ -26,29 +31,56 @@ function drawBarriers(){
 function fire(x,y){
 	// TODO1 add {direction/slope} to projectile array based on mousePositionX/Y and faceX/Y
 }
-function touchingWall(){
-	if((me.bodyY - delta - BODY_RADIUS >= 0) &&
-		(me.bodyY + delta + BODY_RADIUS < HEIGHT) &&
-		 (me.bodyX - delta - BODY_RADIUS >= 0) &&
-		  (me.bodyX + delta + BODY_RADIUS < WIDTH))){
-		return false;
+function touchingWall(direction){
+	switch(direction){
+		case UP:
+			if(me.bodyY - (me.speed * SPEED_MODIFER) - BODY_RADIUS >= 0)
+				return false;
+			break;
+		case DOWN:
+			if(me.bodyY + (me.speed * SPEED_MODIFER) + BODY_RADIUS < HEIGHT)
+				return false;
+			break;
+		case LEFT:
+			if(me.bodyX - (me.speed * SPEED_MODIFER) - BODY_RADIUS >= 0)
+				return false;
+			break;
+		case RIGHT:
+			if(me.bodyX + (me.speed * SPEED_MODIFER) + BODY_RADIUS < WIDTH){
+				console.log('not touching wall');
+				return false;
+			}
+			break;
 	}
+	console.log('touching wall');
 	return true;
 }
-function bodyIntersectsBarrier(barrier){
-	
+function bodyIntersectsBarrier(barrier,direction){
+	var centerX = barrier.x + (barrier.width / 2);
+	var centerY = barrier.y + (barrier.height / 2);
+
+	var diffX = Math.abs(me.bodyX - centerX);
+	var diffY = Math.abs(me.bodyY - centerY);
+
+	if(diffX - (barrier.width / 2) - BODY_RADIUS > 0)
+		return false;
+	if(diffY - (barrier.height / 2) - BODY_RADIUS > 0)
+		return false;
+	console.log('intersects barrier');
+	return true;
 }
-function touchingBarriers(){
+function touchingBarriers(direction){
 	var index;
 	for(index = 0;index < barriers.length;index++){
-		if(bodyIntersectsBarrier(barriers[index])){
+		if(bodyIntersectsBarrier(barriers[index]),direction){
 			return true;
 		}
 	}
+	console.log('not touching barriers');
 	return false;
 }
-function canMove(){
-	if(!touchingWall() && !touchingBarriers()){
+function canMove(direction){
+	if(!touchingWall(direction)){
 		return true;
 	}
 	return false;
@@ -68,23 +100,28 @@ function updateFace(){
 function updateBody(){
 	var delta = me.speed * SPEED_MODIFER;
 	if ((87 in keysDown || 38 in keysDown)) { // up
-		me.bodyY -= delta;
+		if(canMove(UP))
+			me.bodyY -= delta;
 	}
 	if ((83 in keysDown || 40 in keysDown)) { // down
-		me.bodyY += delta;
+		if(canMove(DOWN))
+			me.bodyY += delta;
 	}
 	if ((65 in keysDown || 37 in keysDown)) { // left
-		me.bodyX -= delta;
+		if(canMove(LEFT))
+			me.bodyX -= delta;
 	}
 	if ((68 in keysDown || 39 in keysDown)) { // right
-		me.bodyX += delta;
+		if(canMove(RIGHT))
+			me.bodyX += delta;
+		else
+			console.log('cant move right');
 	}
 }
+
 function updatePlayer(){
-	if(canMove()){
-		updateBody();
-		updateFace();
-	}
+	updateBody();
+	updateFace();
 }
 
 function drawFront(){
