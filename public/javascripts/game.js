@@ -53,10 +53,50 @@ function touchingWall(direction){
 	}
 	return true;
 }
+// limits value to the range min..max
+function clamp(val, min, max) {
+    return Math.max(min, Math.min(max, val))
+}
+ 
+
 function bodyIntersectsBarrier(barrier,direction){
 	var centerX = barrier.x + (barrier.width / 2);
 	var centerY = barrier.y + (barrier.height / 2);
+	
+	// Find the closest point to the circle within the rectangle
+	// Assumes axis alignment! ie rect must not be rotated
+	var closestX;
+	var closestY;
+	
+	var deltaX = 0;
+	var deltaY = 0;
 
+	switch(direction){
+		case UP:
+			deltaY = -1 * (me.speed * SPEED_MODIFER);
+		break;
+		case DOWN:
+			deltaY = (me.speed * SPEED_MODIFER);
+		break;
+		case LEFT:
+			deltaX = -1 * (me.speed * SPEED_MODIFER);
+		break;
+		case RIGHT:
+			deltaX = (me.speed * SPEED_MODIFER);
+		break;
+	}
+	closestX = clamp(me.bodyX + deltaX, barrier.x, barrier.x + barrier.width);
+	closestY = clamp(me.bodyY + deltaY, barrier.y, barrier.y + barrier.height);
+
+	// Calculate the distance between the circle's center and this closest point
+	var distanceX = me.bodyX + deltaX - closestX;
+	var distanceY = me.bodyY + deltaY - closestY;
+	 
+	// If the distance is less than the circle's radius, an intersection occurs
+	var distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+
+	return distanceSquared < (BODY_RADIUS * BODY_RADIUS);
+	/*
 	var diffX = Math.abs(me.bodyX - centerX);
 	var diffY = Math.abs(me.bodyY - centerY);
 	console.log('direction: ' + direction);
@@ -83,7 +123,7 @@ function bodyIntersectsBarrier(barrier,direction){
 	var cornerDistance_sq = Math.pow(diffX - barrier.width/2,2) +
                          Math.pow(diffY - barrier.height/2,2);
 
-    return (cornerDistance_sq <= Math.pow(RADIUS,2));
+    return (cornerDistance_sq <= Math.pow(BODY_RADIUS,2));*/
 }
 function touchingBarriers(direction){
 	var index;
