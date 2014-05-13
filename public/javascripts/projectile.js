@@ -1,4 +1,4 @@
-var PROJECTILE_VELOCITY = 256;
+var PROJECTILE_VELOCITY = 4096;
 var projectiles;
 
 function projectileIntersectsBarriers(currentProjectile){
@@ -18,7 +18,7 @@ function projectileIntersectsPlayer(currentProjectile){
 function handleProjectiles(){
 	var index;
 	for(index = 0;index < projectiles.length;index++){
-		var currentProjectile = projectile[index];
+		var currentProjectile = projectiles[index];
 		if(projectileIntersectsBarriers(currentProjectile) || 
 				projectileIntersectsWall(currentProjectile)){
 			// TODO1 remove projectile
@@ -31,21 +31,42 @@ function handleProjectiles(){
 }
 
 function drawProjectiles(){
-	//console.log('drawing projectiles');
 	var index;
 
 	handleProjectiles();
-
+	ctx.strokeStyle="black";
 	for(index = 0;index < projectiles.length;index++){
-		// TODO1 draw the projectile
+		var current = projectiles[index];
+
+		var deltaX = mouseX - me.bodyX;
+		var deltaY = mouseY - me.bodyY;
+		var angle = Math.atan2(deltaY,deltaX);
+
+		var x = (PROJECTILE_LENGTH * SPEED_MODIFIER) * Math.cos(angle);
+		var y = (PROJECTILE_LENGTH * SPEED_MODIFIER) * Math.sin(angle);
+
+		ctx.moveTo(current.positionX,current.positionY);
+		ctx.lineTo(current.positionX + x,current.positionY + y);
+		ctx.stroke();
 	}
 }
 
 function updateProjectiles(){
 	for(index = 0;index < projectiles.length;index++){
 		var current = projectiles[index];
-		projectiles[index].positionX += (current.magnitudeX * directionX);
-		projectiles[index].positionY += (current.magnitudeY * directionY);
-		// TODO1 advance the projectile based on direction and velocity
+		projectiles[index].positionX += current.run;
+		projectiles[index].positionY += current.rise;
 	}	
+}
+
+function addProjectile(x,y,meX,myY){
+	var rise = y - me.bodyY;
+	var run = x - me.bodyX;
+
+	projectiles.push({
+		positionX: me.frontX,
+		positionY: me.frontY,
+		rise: rise,
+		run: run
+	});	
 }

@@ -5,12 +5,14 @@ var started;
 var WIDTH = 512;
 var HEIGHT = 512;
 var BODY_RADIUS = 25;
-var SPEED_MODIFER = 0.02;
+var SPEED_MODIFIER = 0.02;
 
 var UP = 0;
 var DOWN = 1;
 var LEFT = 2;
 var RIGHT = 3;
+
+var PROJECTILE_LENGTH = 4096;
 
 var keysDown;
 var mouseX;
@@ -29,24 +31,24 @@ function drawBarriers(){
 }
 
 function fire(x,y){
-	// TODO1 add {direction/slope} to projectile array based on mousePositionX/Y and faceX/Y
+	addProjectile(x,y,me.frontX,me.frontY);
 }
 function touchingWall(direction){
 	switch(direction){
 		case UP:
-			if(me.bodyY - (me.speed * SPEED_MODIFER) - BODY_RADIUS >= 0)
+			if(me.bodyY - (me.speed * SPEED_MODIFIER) - BODY_RADIUS >= 0)
 				return false;
 			break;
 		case DOWN:
-			if(me.bodyY + (me.speed * SPEED_MODIFER) + BODY_RADIUS < HEIGHT)
+			if(me.bodyY + (me.speed * SPEED_MODIFIER) + BODY_RADIUS < HEIGHT)
 				return false;
 			break;
 		case LEFT:
-			if(me.bodyX - (me.speed * SPEED_MODIFER) - BODY_RADIUS >= 0)
+			if(me.bodyX - (me.speed * SPEED_MODIFIER) - BODY_RADIUS >= 0)
 				return false;
 			break;
 		case RIGHT:
-			if(me.bodyX + (me.speed * SPEED_MODIFER) + BODY_RADIUS < WIDTH){
+			if(me.bodyX + (me.speed * SPEED_MODIFIER) + BODY_RADIUS < WIDTH){
 				return false;
 			}
 			break;
@@ -73,16 +75,16 @@ function bodyIntersectsBarrier(barrier,direction){
 
 	switch(direction){
 		case UP:
-			deltaY = -1 * (me.speed * SPEED_MODIFER);
+			deltaY = -1 * (me.speed * SPEED_MODIFIER);
 		break;
 		case DOWN:
-			deltaY = (me.speed * SPEED_MODIFER);
+			deltaY = (me.speed * SPEED_MODIFIER);
 		break;
 		case LEFT:
-			deltaX = -1 * (me.speed * SPEED_MODIFER);
+			deltaX = -1 * (me.speed * SPEED_MODIFIER);
 		break;
 		case RIGHT:
-			deltaX = (me.speed * SPEED_MODIFER);
+			deltaX = (me.speed * SPEED_MODIFIER);
 		break;
 	}
 	closestX = clamp(me.bodyX + deltaX, barrier.x, barrier.x + barrier.width);
@@ -96,34 +98,6 @@ function bodyIntersectsBarrier(barrier,direction){
 	var distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
 
 	return distanceSquared < (BODY_RADIUS * BODY_RADIUS);
-	/*
-	var diffX = Math.abs(me.bodyX - centerX);
-	var diffY = Math.abs(me.bodyY - centerY);
-	console.log('direction: ' + direction);
-	switch(direction){
-		case UP:
-		case DOWN:
-			if(diffY - (barrier.height / 2) - BODY_RADIUS > 0){
-				return false;
-			}
-			if(diffY < (barrier.height / 2)){
-				return true;
-			}
-			break;
-		case LEFT:
-		case RIGHT:
-			if(diffX - (barrier.width / 2) - BODY_RADIUS > 0){
-				return false;
-			}
-			if(diffX < (barrier.width / 2)){
-				return true;
-			}
-			break;
-	}
-	var cornerDistance_sq = Math.pow(diffX - barrier.width/2,2) +
-                         Math.pow(diffY - barrier.height/2,2);
-
-    return (cornerDistance_sq <= Math.pow(BODY_RADIUS,2));*/
 }
 function touchingBarriers(direction){
 	var index;
@@ -140,7 +114,7 @@ function canMove(direction){
 	}
 	return false;
 }
-function updateFace(){
+function updateFront(){
 	var deltaX = mouseX - me.bodyX;
 	var deltaY = mouseY - me.bodyY;
 	var angle = Math.atan2(deltaY,deltaX);
@@ -152,7 +126,7 @@ function updateFace(){
 	me.frontY = me.bodyY + y;
 }
 function updateBody(){
-	var delta = me.speed * SPEED_MODIFER;
+	var delta = me.speed * SPEED_MODIFIER;
 	if ((87 in keysDown || 38 in keysDown)) { // up
 		if(canMove(UP))
 			me.bodyY -= delta;
@@ -173,7 +147,7 @@ function updateBody(){
 
 function updatePlayer(){
 	updateBody();
-	updateFace();
+	updateFront();
 }
 
 function drawFront(){
@@ -227,6 +201,10 @@ function addListeners(){
 
   		var msg = 'mousemove() position - x : ' + relX + ', y : ' + relY;
 	  	//console.log(msg);
+	});
+
+	$('#myCanvas').mousedown(function(event) {
+		fire(mouseX,mouseY);	  	
 	});
 }
 
@@ -283,7 +261,7 @@ function update() {
 // The main game loop
 function main() {	
 
-	update(SPEED_MODIFER);
+	update(SPEED_MODIFIER);
 	render();
 
 	requestAnimationFrame(main);
