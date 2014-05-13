@@ -38,8 +38,8 @@ function drawProjectiles(){
 	for(index = 0;index < projectiles.length;index++){
 		var current = projectiles[index];
 
-		var deltaX = mouseX - me.bodyX;
-		var deltaY = mouseY - me.bodyY;
+		var deltaX = current.clickedX - me.frontX;
+		var deltaY = current.clickedY - me.frontY;
 		var angle = Math.atan2(deltaY,deltaX);
 
 		var x = (PROJECTILE_LENGTH * SPEED_MODIFIER) * Math.cos(angle);
@@ -64,6 +64,8 @@ function addProjectile(x,y,meX,myY){
 	var run = x - me.bodyX;
 
 	projectiles.push({
+		clickedX: x,
+		clickedY: y,
 		positionX: me.frontX,
 		positionY: me.frontY,
 		rise: rise,
