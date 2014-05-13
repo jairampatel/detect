@@ -12,8 +12,6 @@ var DOWN = 1;
 var LEFT = 2;
 var RIGHT = 3;
 
-var PROJECTILE_LENGTH = 4096;
-
 var keysDown;
 var mouseX;
 var mouseY;

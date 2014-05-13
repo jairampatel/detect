@@ -1,4 +1,5 @@
-var PROJECTILE_VELOCITY = 4096;
+var PROJECTILE_LENGTH = 8;
+var PROJECTILE_VELOCITY = 2;
 var projectiles;
 
 function projectileIntersectsBarriers(currentProjectile){
@@ -38,37 +39,38 @@ function drawProjectiles(){
 	for(index = 0;index < projectiles.length;index++){
 		var current = projectiles[index];
 
-		var deltaX = current.clickedX - me.frontX;
-		var deltaY = current.clickedY - me.frontY;
-		var angle = Math.atan2(deltaY,deltaX);
-
-		var x = (PROJECTILE_LENGTH * SPEED_MODIFIER) * Math.cos(angle);
-		var y = (PROJECTILE_LENGTH * SPEED_MODIFIER) * Math.sin(angle);
-
 		ctx.moveTo(current.positionX,current.positionY);
-		ctx.lineTo(current.positionX + x,current.positionY + y);
+		ctx.lineTo(current.positionX + current.deltaX,current.positionY + current.Y);
 		ctx.stroke();
+
+		current.positionX += current.deltaX;
+		current.positionY += current.deltaY;
 	}
 }
 
 function updateProjectiles(){
 	for(index = 0;index < projectiles.length;index++){
 		var current = projectiles[index];
-		projectiles[index].positionX += current.run;
-		projectiles[index].positionY += current.rise;
+		projectiles[index].positionX += current.deltaX;
+		projectiles[index].positionY += current.deltaY;
 	}	
 }
 
 function addProjectile(x,y,meX,myY){
-	var rise = y - me.bodyY;
-	var run = x - me.bodyX;
+
+	var deltaX = (x) - (meX);
+	var deltaY = (y) - (myY);
+	var angle = Math.atan2(deltaY,deltaX);
+
+	var x = (BODY_RADIUS + PROJECTILE_LENGTH) * Math.cos(angle);
+	var y = (BODY_RADIUS + PROJECTILE_LENGTH) * Math.sin(angle);
 
 	projectiles.push({
 		clickedX: x,
 		clickedY: y,
 		positionX: me.frontX,
 		positionY: me.frontY,
-		rise: rise,
-		run: run
+		deltaX: deltaX,
+		deltaY: deltaY
 	});	
 }
