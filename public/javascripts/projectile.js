@@ -2,13 +2,6 @@ var PROJECTILE_LENGTH = 12;
 
 var projectiles;
 
-function projectileIntersectsBarriers(currentProjectile){
-	var index;
-	for(index = 0;index < barriers.length;index++){
-		// TODO1
-	}
-	return false;
-}
 
 function linesIntersect(x1, y1, x2, y2, x3, y3, x4, y4){
 	var a1, a2, b1, b2, c1, c2; /* Coefficients of line eqns. */
@@ -70,24 +63,48 @@ function linesIntersect(x1, y1, x2, y2, x3, y3, x4, y4){
 
     return true;
 }
+
+function lineIntersectsRectangle(width,height,x1, y1, x3, y3, x4, y4){
+	if((linesIntersect(x1,y1,
+						x1,y1 + height,
+							x3,y3,
+								x4,y4)) ||
+			(linesIntersect(x1,y1,
+						x1 + width, y1,
+							x3,y3,
+								x4,y4)) ||
+			(linesIntersect(x1 + width,y1 + height,
+						x1,y1 + height,
+							x3,y3,
+								x4,y4)) ||
+			(linesIntersect(x1 + width,y1 + height,
+						x1 + width,y1,
+							x3,y3,
+								x4,y4))) {
+			return true;
+		}
+	return false;
+}
+function projectileIntersectsBarriers(currentProjectile){
+	var index;
+	for(index = 0;index < barriers.length;index++){
+		var current = barriers[index];
+		if(lineIntersectsRectangle(current.width,current.height,
+									current.x,current.y,
+										currentProjectile.positionX, currentProjectile.positionY,
+											currentProjectile.endPositionX,currentProjectile.endPositionY)){
+			return true;
+		}
+	}
+	return false;
+}
+
 function projectileIntersectsWall(currentProjectile){
-	if((linesIntersect(0,0,
-						0,HEIGHT,
-							currentProjectile.positionX,currentProjectile.positionY,
-								currentProjectile.endPositionX,currentProjectile.endPositionY)) ||
-		(linesIntersect(0,0,
-						WIDTH,0,
-							currentProjectile.positionX,currentProjectile.positionY,
-								currentProjectile.endPositionX,currentProjectile.endPositionY)) ||
-		 (linesIntersect(WIDTH,HEIGHT,
-						0,HEIGHT,
-							currentProjectile.positionX,currentProjectile.positionY,
-								currentProjectile.endPositionX,currentProjectile.endPositionY)) ||
-		  (linesIntersect(WIDTH,HEIGHT,
-						WIDTH,0,
-							currentProjectile.positionX,currentProjectile.positionY,
-								currentProjectile.endPositionX,currentProjectile.endPositionY))){
-		  	return true;
+	if(lineIntersectsRectangle(WIDTH,HEIGHT,
+								0,0,
+									currentProjectile.positionX,currentProjectile.positionY,
+										currentProjectile.endPositionX,currentProjectile.endPositionY)){
+		return true;
 	}
 	return false;
 }
@@ -114,11 +131,11 @@ function handleProjectiles(){
 function drawProjectiles(){
 	var index;
 
-	handleProjectiles();
+	
 	ctx.strokeStyle="black";
 	for(index = 0;index < projectiles.length;index++){
 
-		console.log('drawing projectile 1');
+		//console.log('drawing projectile 1');
 		var current = projectiles[index];
 
 		ctx.moveTo(current.positionX,current.positionY);
@@ -133,6 +150,7 @@ function updateProjectiles(){
 		projectiles[index].positionX += current.deltaX;
 		projectiles[index].positionY += current.deltaY;
 	}	
+	handleProjectiles();
 }
 
 function addProjectile(x,y,meX,myY){

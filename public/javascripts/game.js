@@ -230,25 +230,25 @@ function addBarriers(){
 		x:WIDTH / 6,
 		y:HEIGHT / 6,
 		width:100,
-		height:10
+		height:20
 	});
 	barriers.push({
 		x:WIDTH * 4 / 6,
 		y:HEIGHT * 2 / 6,
 		width:100,
-		height:10
+		height:20
 	});
 	barriers.push({
 		x:WIDTH * 4 / 6,
 		y:HEIGHT * 4 / 6,
 		width:100,
-		height:10
+		height:20
 	});
 	barriers.push({
 		x:WIDTH / 6,
 		y:HEIGHT * 5 / 6,
 		width:100,
-		height:10
+		height:20
 	});
 }
 
