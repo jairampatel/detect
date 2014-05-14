@@ -12,6 +12,9 @@ var DOWN = 1;
 var LEFT = 2;
 var RIGHT = 3;
 
+var OFFSET_LEFT = -1;
+var OFFSET_TOP = -1;
+
 var keysDown;
 var mouseX;
 var mouseY;
@@ -189,10 +192,15 @@ function addListeners(){
 
 	$('#myCanvas').mousemove(function(event) {
 
-	  	var parentOffset = $(this).parent().offset(); 
-	   	//or $(this).offset(); if you really just want the current element's offset
-	   	var relX = event.pageX - parentOffset.left;
-	   	var relY = event.pageY - parentOffset.top;
+		var parentOffset = $(this).parent().offset();
+
+		if(OFFSET_LEFT == -1)
+			OFFSET_LEFT = parentOffset.left; 
+		if(OFFSET_TOP == -1)
+			OFFSET_TOP = parentOffset.top; 
+
+	   	var relX = event.pageX - OFFSET_LEFT;
+	   	var relY = event.pageY - OFFSET_TOP;
 
 	   	mouseX = relX;
 		mouseY = relY;
