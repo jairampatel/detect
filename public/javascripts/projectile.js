@@ -1,5 +1,5 @@
-var PROJECTILE_LENGTH = 8;
-var PROJECTILE_VELOCITY = 2;
+var PROJECTILE_LENGTH = 12;
+
 var projectiles;
 
 function projectileIntersectsBarriers(currentProjectile){
@@ -37,12 +37,14 @@ function drawProjectiles(){
 	handleProjectiles();
 	ctx.strokeStyle="black";
 	for(index = 0;index < projectiles.length;index++){
+
+		console.log('drawing projectile: ' + index);
 		var current = projectiles[index];
 
 		ctx.moveTo(current.positionX,current.positionY);
-		ctx.lineTo(current.positionX + current.deltaX,current.positionY + current.Y);
+		ctx.lineTo(current.positionX + current.deltaX,current.positionY + current.deltaY);
 		ctx.stroke();
-
+		
 		current.positionX += current.deltaX;
 		current.positionY += current.deltaY;
 	}
@@ -70,7 +72,7 @@ function addProjectile(x,y,meX,myY){
 		clickedY: y,
 		positionX: me.frontX,
 		positionY: me.frontY,
-		deltaX: deltaX,
-		deltaY: deltaY
+		deltaX: x,
+		deltaY: y
 	});	
 }
