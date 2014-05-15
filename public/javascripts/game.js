@@ -182,6 +182,7 @@ function setMePosition(x,y){
 }
 
 function addListeners(){
+	$('body').on('contextmenu', '#myCanvas', function(e){ return false; });
 	addEventListener("keydown", function (e) {
 		keysDown[e.keyCode] = true;
 	}, false);
@@ -210,7 +211,10 @@ function addListeners(){
 	});
 
 	$('#myCanvas').mousedown(function(event) {
-		fire(mouseX,mouseY);	  	
+
+		if(event.button == 0){
+			fire(mouseX,mouseY);	 
+		}	
 	});
 }
 
