@@ -372,7 +372,7 @@ function setUp(){
 	initVariables();
 	addListeners();
 
-	setMePosition(canvas.width/2, canvas.height/2);
+	setMePosition(canvas.width/2, canvas.height*5/6);
 	drawPlayer();
 	drawBarriers();
 
