@@ -28,10 +28,10 @@ function sendPosition(){
 	var tempId = [];
 	var index;
 	for(index = 0;index < getProjectiles().length;index++){
-		tempProj.push(getProjectiles()[index]);
+		tempProj.push(getProjectiles()[index] * -1);
 	}
 	for(index = 0;index < getIds().length;index++){
-		tempId.push(getIds()[index]);
+		tempId.push(getIds()[index] * -1);
 	}
 	socket.emit('myLocation',{
 		bodyX: getBodyX(),
