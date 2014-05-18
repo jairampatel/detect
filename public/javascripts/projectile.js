@@ -1,6 +1,8 @@
 var PROJECTILE_LENGTH = 12;
 
 var projectiles;
+var id = 0;
+var ids = [];
 
 
 function linesIntersect(x1, y1, x2, y2, x3, y3, x4, y4){
@@ -120,6 +122,7 @@ function handleProjectiles(){
 		if(projectileIntersectsBarriers(currentProjectile) || 
 				projectileIntersectsWall(currentProjectile)){
 			projectiles.splice(index,1);
+			ids.splice(index,1);
 		}
 
 		if(projectileIntersectsPlayer(currentProjectile)){
@@ -153,6 +156,25 @@ function updateProjectiles(){
 	handleProjectiles();
 }
 
+function addProjectiles(idArray, projArray){
+	var i;
+	for(i = 0;i < idArray.length;i++){
+		if(ids.indexOf(idArray[i]) < 0){
+			ids.push(idArray[i]);
+			projectiles.push(projArray[i]);
+		}
+	}
+}
+function getId(){
+	id++;
+	return id;
+}
+function getIds(){
+	return ids;
+}
+function getProjectiles(){
+	return projectiles;
+}
 function addProjectile(x,y,meX,myY){
 
 	var deltaX = (x) - (meX);
@@ -162,7 +184,10 @@ function addProjectile(x,y,meX,myY){
 	var x = (BODY_RADIUS + PROJECTILE_LENGTH) * Math.cos(angle);
 	var y = (BODY_RADIUS + PROJECTILE_LENGTH) * Math.sin(angle);
 
+	var i = getId();
+	ids.push(i);
 	projectiles.push({
+		id: i,
 		clickedX: x,
 		clickedY: y,
 		positionX: me.frontX,

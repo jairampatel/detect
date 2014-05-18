@@ -25,7 +25,7 @@ var keysDown;
 var mouseX;
 var mouseY;
 
-var moved = 0;
+var changed = 0;
 var me;
 var opponent;
 
@@ -190,25 +190,25 @@ function updateBody(){
 	if ((87 in keysDown || 38 in keysDown)) { // up
 		if(canMove(UP)){
 			me.bodyY -= delta;
-			moved = 1;
+			changed = 1;
 		}
 	}
 	if ((83 in keysDown || 40 in keysDown)) { // down
 		if(canMove(DOWN)){
 			me.bodyY += delta;
-			moved = 1;
+			changed = 1;
 		}
 	}
 	if ((65 in keysDown || 37 in keysDown)) { // left
 		if(canMove(LEFT)){
 			me.bodyX -= delta;
-			moved = 1;
+			changed = 1;
 		}
 	}
 	if ((68 in keysDown || 39 in keysDown)) { // right
 		if(canMove(RIGHT)){
 			me.bodyX += delta;
-			moved = 1;
+			changed = 1;
 		}
 	}
 }
@@ -216,8 +216,8 @@ function updateBody(){
 function updatePlayer(){
 	updateBody();
 	updateFront();
-	if(moved){
-		moved = 0;
+	if(changed){
+		changed = 0;
 		sendPosition();
 	}
 }
@@ -279,6 +279,7 @@ function addListeners(){
 	$('#myCanvas').mousedown(function(event) {
 
 		if(event.button == 0){
+			changed = 1;
 			fire(mouseX,mouseY);	 
 		}	
 	});

@@ -1,5 +1,6 @@
 <script>
 var socket = io.connect('http://detect.herokuapp.com');
+//var socket = io.connect('http://localhost:3000');
 
 socket.on('connect',function(data){
 		if(!connected){
@@ -13,6 +14,7 @@ socket.on('connect',function(data){
 
 		socket.on('opponentLocation',function(data){
 			setOpponent(data.bodyX,data.bodyY,data.frontX,data.frontY);
+			addProjectiles(data.ids, data.projectiles);
 		});
 });
 
@@ -22,11 +24,22 @@ function ready(){
 }
 
 function sendPosition(){
+	var tempProj = [];
+	var tempId = [];
+	var index;
+	for(index = 0;index < getProjectiles().length;index++){
+		tempProj.push(getProjectiles()[index]);
+	}
+	for(index = 0;index < getIds().length;index++){
+		tempId.push(getIds()[index]);
+	}
 	socket.emit('myLocation',{
 		bodyX: getBodyX(),
 		bodyY: getBodyY(),
 		frontX: getFrontX(),
-		frontY: getFrontY()
+		frontY: getFrontY(),
+		projectiles: tempProj,
+		ids: tempId
 	});
 }
 </script>

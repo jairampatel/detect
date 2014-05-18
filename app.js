@@ -40,7 +40,7 @@ io.sockets.on('connection', function(socket){
 		roomSockets.push(socket.id);
 		players[socket.id] = {};
 	});
-	
+
 	socket.on('ready',function(data){
 		var opponent = 0;
 		if(roomSockets[0]==socket.id){
@@ -67,7 +67,9 @@ io.sockets.on('connection', function(socket){
 					bodyX: players[socket.id].bodyX,
 					bodyY: players[socket.id].bodyY,
 					frontX: players[socket.id].frontX,
-					frontY: players[socket.id].frontY
+					frontY: players[socket.id].frontY,
+					projectiles: data.projectiles,
+					ids: data.ids
 			});
 		}
 	});
