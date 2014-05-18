@@ -368,6 +368,7 @@ function initVariables(){
 	};
 	addBarriers();
 }
+
 function setUp(){
 	createCanvas();
 	initVariables();
