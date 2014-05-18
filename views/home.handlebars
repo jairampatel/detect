@@ -1,5 +1,39 @@
+<script>
+var socket = io.connect('http://localhost:3000');
+
+socket.on('connect',function(data){
+		if(!connected){
+			connected = 1;
+			socket.emit('joinRoom');
+		}
+		socket.on('opponentReady',function(data){
+			setOpponentReady();
+		});
+		
+
+		socket.on('opponentLocation',function(data){
+			console.log('drawing opponent');
+			setOpponent(data.bodyX,data.bodyY,data.frontX,data.frontY);
+		});
+});
+
+function ready(){
+	socket.emit('ready');
+	startGame();
+}
+
+function sendPosition(){
+	socket.emit('myLocation',{
+		bodyX: getBodyX(),
+		bodyY: getBodyY(),
+		frontX: getFrontX(),
+		frontY: getFrontY()
+	});
+}
+</script>
+
 <h1>Detect</h1>
 
-<button class="btn btn-primary" onClick="startGame();">Start</button>
+<button class="btn btn-primary" onClick="ready();">Start</button>
 <br><br>
 <div id="game"></div>
