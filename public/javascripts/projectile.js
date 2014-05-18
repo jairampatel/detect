@@ -150,7 +150,6 @@ function drawProjectiles(){
 function updateProjectiles(){
 	for(index = 0;index < projectiles.length;index++){
 		var current = projectiles[index];
-		console.log('current: ' + current);
 		projectiles[index].positionX += current.deltaX;
 		projectiles[index].positionY += current.deltaY;
 	}	
