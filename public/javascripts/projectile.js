@@ -150,6 +150,7 @@ function drawProjectiles(){
 function updateProjectiles(){
 	for(index = 0;index < projectiles.length;index++){
 		var current = projectiles[index];
+		console.log('current: ' + current);
 		projectiles[index].positionX += current.deltaX;
 		projectiles[index].positionY += current.deltaY;
 	}	
@@ -187,7 +188,6 @@ function addProjectile(x,y,meX,myY){
 	var i = getId();
 	ids.push(i);
 	projectiles.push({
-		id: i,
 		clickedX: x,
 		clickedY: y,
 		positionX: me.frontX,

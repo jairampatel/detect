@@ -1,6 +1,6 @@
 <script>
-var socket = io.connect('http://detect.herokuapp.com');
-//var socket = io.connect('http://localhost:3000');
+//var socket = io.connect('http://detect.herokuapp.com');
+var socket = io.connect('http://localhost:3000');
 
 socket.on('connect',function(data){
 		if(!connected){
@@ -30,7 +30,7 @@ function sendPosition(){
 	var proj = getProjectiles();
 	var i = getIds();
 	for(index = 0;index < proj.length;index++){
-		tempProj.push(proj[index] * -1);
+		tempProj.push(proj[index]);
 	}
 	for(index = 0;index < i.length;index++){
 		tempId.push(i[index] * -1);
