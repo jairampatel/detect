@@ -40,7 +40,10 @@ io.sockets.on('connection', function(socket){
 		roomSockets.push(socket.id);
 		players[socket.id] = {};
 	});
-
+	socket.on('disconnect', function () {
+        console.log('1 client left');
+        
+    });
 	socket.on('ready',function(data){
 		var opponent = 0;
 		if(roomSockets[0]==socket.id){
