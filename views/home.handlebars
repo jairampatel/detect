@@ -12,7 +12,6 @@ socket.on('connect',function(data){
 		
 
 		socket.on('opponentLocation',function(data){
-			//console.log('drawing opponent');
 			setOpponent(data.bodyX,data.bodyY,data.frontX,data.frontY);
 		});
 });
