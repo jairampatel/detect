@@ -1,0 +1,58 @@
+<script>
+var socket = io.connect('http://detect.herokuapp.com');
+//var socket = io.connect('http://localhost:3000');
+
+socket.on('connect',function(data){
+		if(!connected){
+			connected = 1;
+			socket.emit('joinRoom',{
+				room: '{{this.room}}'
+			});
+		}
+		socket.on('opponentReady',function(data){
+			setOpponentReady();
+		});
+		
+
+		socket.on('opponentLocation',function(data){
+			setOpponent(data.bodyX,data.bodyY,data.frontX,data.frontY);
+			addProjectiles(data.ids, data.projectiles);
+		});
+});
+
+function ready(){
+	socket.emit('ready',{
+		room: '{{this.room}}'
+	});
+	startGame();
+}
+
+function sendPosition(){
+	var tempProj = [];
+	var tempId = [];
+	var index;
+	var proj = getProjectiles();
+	var i = getIds();
+	for(index = 0;index < proj.length;index++){
+		tempProj.push(proj[index]);
+	}
+	for(index = 0;index < i.length;index++){
+		tempId.push(i[index] * -1);
+	}
+	socket.emit('myLocation',{
+		bodyX: getBodyX(),
+		bodyY: getBodyY(),
+		frontX: getFrontX(),
+		frontY: getFrontY(),
+		projectiles: tempProj,
+		ids: tempId,
+		room: '{{this.room}}'
+	});
+}
+</script>
+
+<h1>Detect</h1>
+    <button class="btn btn-primary" onClick="ready();">Join Room</button>
+	<br><br>
+	<div id="game"></div>
+

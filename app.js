@@ -30,47 +30,82 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-var roomSockets = [];
-var players = {};
+
+/*
+	rooms[roomName] = [
+		{
+			id: id1,
+			bodyX: bodyX,
+			bodyY: bodyY,
+			frontX: frontX,
+			frontY: frontY
+		}
+	]
+*/
+var rooms = {};
 
 io.sockets.on('connection', function(socket){
 	socket.on('joinRoom',function(data){		
-		console.log('joining room: ' + socket.id);
-		socket.join('room');
-		roomSockets.push(socket.id);
-		players[socket.id] = {};
+		var room = data.room;
+		//console.log('room: ' + room);
+		if(!rooms[room]){
+			rooms[room] = []
+		}
+		//TODO 2 Allow others can view game. Limit moves to the first 2
+		rooms[room].push({
+			id: socket.id,
+			bodyX: -1,
+			bodyY: -1,
+			frontX: -1,
+			frontY: -1
+		});
 	});
-	socket.on('disconnect', function () {
-        console.log('1 client left');
-        
+	socket.on('disconnect', function (data) {
+        console.log('1 client left');        
     });
 	socket.on('ready',function(data){
-		var opponent = 0;
-		if(roomSockets[0]==socket.id){
-			opponent = 1;
+		var room = data.room;
+		var opponent = -1;
+		if(rooms[room].length > 1){
+			if(rooms[room][0].id == socket.id){
+				opponent = 1;
+			}
+			else if(rooms[room][1].id == socket.id){
+				opponent = 0;
+			}
+			//console.log('opponent: ' + opponent);
+			if(opponent != -1){
+				io.sockets.socket(rooms[room][opponent].id).emit('opponentReady');
+			}
 		}
-		io.sockets.socket(roomSockets[opponent]).emit('opponentReady');
 	});
 
 	socket.on('myLocation',function(data){
-		console.log('players: ' + players);
-		console.log('id: ' + socket.id);
-		if(players[socket.id]){
-			players[socket.id].bodyX = data.bodyX;
-			players[socket.id].bodyY = data.bodyY;
 
-			players[socket.id].frontX = data.frontX;
-			players[socket.id].frontY = data.frontY;
+		var room = data.room;
+		var me = -1;
 
-			var opponent = 0;
-			if(roomSockets[0]==socket.id){
-				opponent = 1;
-			}
-			io.sockets.socket(roomSockets[opponent]).emit('opponentLocation',{
-					bodyX: players[socket.id].bodyX,
-					bodyY: players[socket.id].bodyY,
-					frontX: players[socket.id].frontX,
-					frontY: players[socket.id].frontY,
+		if(rooms[room][0].id==socket.id){
+			me = 0;
+		}
+		else if(rooms[room][1].id==socket.id){
+			me = 1;
+		}
+		if(me != -1){
+			//console.log('received: (' + data.bodyX + ',' + data.bodyY + ')');
+			rooms[room][me].bodyX = data.bodyX;
+			rooms[room][me].bodyY = data.bodyY;
+
+			rooms[room][me].frontX = data.frontX;
+			rooms[room][me].frontY = data.frontY;
+
+			var opponent = me ^ 1;
+
+			io.sockets.socket(rooms[room][opponent].id).emit('opponentLocation',{
+					bodyX: rooms[room][me].bodyX,
+					bodyY: rooms[room][me].bodyY,
+					frontX: rooms[room][me].frontX,
+					frontY: rooms[room][me].frontY,
 					projectiles: data.projectiles,
 					ids: data.ids
 			});
@@ -82,6 +117,12 @@ app.get('/', function (req, res) {
     res.render('home');
 });
 
+app.get('/play',function(req,res){
+	res.render('play',{
+		nickname: req.query.nickname,
+		room: req.query.room
+	});
+});
+
 server.listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
 });

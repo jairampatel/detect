@@ -1,53 +1,15 @@
-<script>
-var socket = io.connect('http://detect.herokuapp.com');
-//var socket = io.connect('http://localhost:3000');
-
-socket.on('connect',function(data){
-		if(!connected){
-			connected = 1;
-			socket.emit('joinRoom');
-		}
-		socket.on('opponentReady',function(data){
-			setOpponentReady();
-		});
-		
-
-		socket.on('opponentLocation',function(data){
-			setOpponent(data.bodyX,data.bodyY,data.frontX,data.frontY);
-			addProjectiles(data.ids, data.projectiles);
-		});
-});
-
-function ready(){
-	socket.emit('ready');
-	startGame();
-}
-
-function sendPosition(){
-	var tempProj = [];
-	var tempId = [];
-	var index;
-	var proj = getProjectiles();
-	var i = getIds();
-	for(index = 0;index < proj.length;index++){
-		tempProj.push(proj[index]);
-	}
-	for(index = 0;index < i.length;index++){
-		tempId.push(i[index] * -1);
-	}
-	socket.emit('myLocation',{
-		bodyX: getBodyX(),
-		bodyY: getBodyY(),
-		frontX: getFrontX(),
-		frontY: getFrontY(),
-		projectiles: tempProj,
-		ids: tempId
-	});
-}
-</script>
-
-<h1>Detect</h1>
-
-<button class="btn btn-primary" onClick="ready();">Start</button>
-<br><br>
-<div id="game"></div>
+<div class="row-fluid">
+  <div class="span4 offset4 text-center">
+  	<h1>Detect</h1>
+    <form class="form-inline" role="form" action="/play" method="GET">
+		<div class="form-group">
+		    <input class="form-control" id="nickname" name="nickname" placeholder="Enter nickname">
+	  	</div>
+		<div class="form-group">
+			<input class="form-control" id="room" name="room" placeholder="Room">
+	 	</div>
+	 	<br><br>
+	  	<button type="submit" class="btn btn-default">Play</button>
+	</form>
+  </div>
+</div>
