@@ -1,9 +1,13 @@
 TODO
 ----
-0) Allow users to join rooms
-1) Slower projectile speed
-2) Slower fire speed
-3) Hide players if behind wall
-4) Fix projectile bugs
-5) Right clicking/wasd canvas should not keep moving player after keyup
-6) Search for any open games ( p2 )
+
+- Show opponent on opposite side
+- Slower projectile speed
+- Slower fire speed
+- Hide players if behind wall
+- Fix projectile bugs
+	Multiple projectiles when sending
+- Fix room bugs
+	Both players must join before playing
+	Allow users to play whenver they're ready
+- Search for any open games ( p2 )
