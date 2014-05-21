@@ -211,6 +211,7 @@ function updateBody(){
 			changed = 1;
 		}
 	}
+	//console.log('(' + me.bodyX + ',' + me.bodyY + ')');
 }
 
 function updatePlayer(){
@@ -259,7 +260,7 @@ function addListeners(){
 
 	$('#myCanvas').mousemove(function(event) {
 
-		var parentOffset = $(this).parent().offset();
+		var parentOffset = canvas.getBoundingClientRect();
 
 		if(OFFSET_LEFT == -1)
 			OFFSET_LEFT = parentOffset.left; 
@@ -271,8 +272,8 @@ function addListeners(){
 
 	   	mouseX = relX;
 		mouseY = relY;
-
-  		var msg = 'mousemove() position - x : ' + relX + ', y : ' + relY;
+		//console.log('mouse: (' + mouseX + ',' + mouseY + ')');
+  		//var msg = 'mousemove() position - x : ' + relX + ', y : ' + relY;
 	  	//console.log(msg);
 	});
 
