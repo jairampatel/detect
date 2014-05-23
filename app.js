@@ -47,6 +47,7 @@ var rooms = {};
 io.sockets.on('connection', function(socket){
 	socket.on('joinRoom',function(data){		
 		var room = data.room;
+		var nickname = data.nickname;
 		//console.log('room: ' + room);
 		if(!rooms[room]){
 			rooms[room] = []
@@ -54,6 +55,7 @@ io.sockets.on('connection', function(socket){
 		//TODO 2 Allow others can view game. Limit moves to the first 2
 		rooms[room].push({
 			id: socket.id,
+			nickname: nickname, 
 			bodyX: -1,
 			bodyY: -1,
 			frontX: -1,
@@ -66,6 +68,8 @@ io.sockets.on('connection', function(socket){
 	socket.on('ready',function(data){
 		var room = data.room;
 		var opponent = -1;
+		var me = -1;
+
 		if(rooms[room].length > 1){
 			if(rooms[room][0].id == socket.id){
 				opponent = 1;
@@ -75,7 +79,18 @@ io.sockets.on('connection', function(socket){
 			}
 			//console.log('opponent: ' + opponent);
 			if(opponent != -1){
-				io.sockets.socket(rooms[room][opponent].id).emit('opponentReady');
+				me = opponent ^ 1;
+				console.log('me: ' + me);
+				console.log('opponent: ' + opponent);
+				console.log('my nickname: ' + rooms[room][me].nickname);
+				console.log('opponent nickname: ' + rooms[room][opponent].nickname);
+				io.sockets.socket(rooms[room][opponent].id).emit('opponentReady',{
+					nickname: rooms[room][me].nickname 
+				});
+
+				/*io.sockets.socket(rooms[room][me].id).emit('opponentReady',{
+					nickname: rooms[room][opponent].nickname 
+				});*/
 			}
 		}
 	});

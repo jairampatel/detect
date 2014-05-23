@@ -1,13 +1,13 @@
 TODO
 ----
 
-- Show opponent on opposite side
-- Slower projectile speed
-- Slower fire speed
-- Hide players if behind wall
-- Fix projectile bugs
+[] Show opponent on opposite side
+[] Slower projectile speed
+[] Slower fire speed
+[] Hide players if behind wall
+[] Fix projectile bugs
 	Multiple projectiles when sending
-- Fix room bugs
+[] Fix room bugs
 	Both players must join before playing
 	Allow users to play whenver they're ready
-- Search for any open games ( p2 )
+[] Search for any open games ( p2 )

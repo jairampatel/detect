@@ -3,6 +3,7 @@ var ctx;
 var started;
 
 var opponentReady = false;
+var waitingForMe = false;
 
 var WIDTH = 512;
 var HEIGHT = 512;
@@ -41,32 +42,43 @@ var OPPONENT = 1;
 
 var connected = 0;
 
+function canStart(){
+	return (started && opponentReady);
+}
 function getBodyX(){
-	if(started && opponentReady)
+	if(canStart())
 		return me.bodyX;
 	return 0;
 }
 
 function getBodyY(){
-	if(started && opponentReady)
+	if(canStart())
 		return me.bodyY;
 	return 0;
 }
 
 function getFrontX(){
-	if(started && opponentReady)
+	if(canStart())
 		return me.frontX;
 	return 0;
 }
 
 function getFrontY(){
-	if(started && opponentReady)
+	if(canStart())
 		return me.frontY;
 	return 0;
 }
 
+function setName(id,nickname){
+	$(id).html(nickname);
+}
 function setOpponentReady(){
-	opponentReady = true;
+	if(!started){
+		waitingForMe = true;
+	}
+	else{
+		opponentReady = true;
+	}
 }
 
 function setOpponent(bodyX, bodyY, frontX, frontY){
@@ -76,7 +88,7 @@ function setOpponent(bodyX, bodyY, frontX, frontY){
 	opponent.frontY = frontY;
 }
 function drawOpponent(){
-	if(started && opponentReady){
+	if(canStart()){
 		drawCircle(opponent.bodyX,opponent.bodyY,BODY_RADIUS,0,END,body[OPPONENT],bodyStroke[OPPONENT]);
 		drawCircle(opponent.frontX,opponent.frontY,FRONT_RADIUS,0,END,front[OPPONENT],frontStroke[OPPONENT]);
 	}
@@ -380,6 +392,9 @@ function setUp(){
 	drawBarriers();
 
 	started = true;
+	if(waitingForMe){
+		opponentReady = true;
+	}
 }
 
 function startGame(){

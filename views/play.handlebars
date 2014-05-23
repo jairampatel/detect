@@ -1,15 +1,20 @@
 <script>
-var socket = io.connect('http://detect.herokuapp.com');
-//var socket = io.connect('http://localhost:3000');
+//var socket = io.connect('http://detect.herokuapp.com');
+var socket = io.connect('http://localhost:3000');
 
 socket.on('connect',function(data){
 		if(!connected){
 			connected = 1;
 			socket.emit('joinRoom',{
-				room: '{{this.room}}'
+				room: '{{this.room}}',
+				nickname: '{{this.nickname}}'
 			});
+
+			setName("#myNickname",'{{this.nickname}}');
 		}
 		socket.on('opponentReady',function(data){
+			console.log('setting opponent nick: ' + data.nickname);
+			setName("#opponentNickname",data.nickname);
 			setOpponentReady();
 		});
 		
@@ -21,6 +26,7 @@ socket.on('connect',function(data){
 });
 
 function ready(){
+	$("#start").toggle();
 	socket.emit('ready',{
 		room: '{{this.room}}'
 	});
@@ -54,8 +60,28 @@ function sendPosition(){
 <div class="row-fluid">
   <div class="span4 offset4 text-center">
   	<h1>Detect</h1>
-    <button class="btn btn-primary" onClick="ready();">Start</button>
+    <button id="start" class="btn btn-primary" onClick="ready();">Start</button>
 	<br><br>
+
+	<div id="wrapperPlayers">
+		<div class="player">
+			<div id="myNickname" class="playerName">
+				Player One
+			</div>
+			<div class="playerScore">
+				0
+			</div>
+		</div>
+		<div class="player">
+			<div id="opponentNickname" class="playerName">
+				Player Two
+			</div>
+			<div class="playerScore">
+				0
+			</div>
+		</div>
+	</div>
+	<br>
 	<div id="game"></div>
   </div>
 </div>

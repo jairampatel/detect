@@ -1,8 +1,28 @@
 body {
-  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
+}
+
+#wrapperPlayers{ 
+    height:60px; 
+    text-align:center;
+}
+
+.player{        
+    width:300px;
+    height:60px;
+    display:inline-block;
+    padding: 5px;
+    background-color:#EBEBEB; 
+}
+.playerName{
+	font-size: 20px;
+	color: rgb(97, 97, 97);
+}
+.playerScore{
+	font-size: 20px;
+	color: rgb(7, 116, 98);
 }

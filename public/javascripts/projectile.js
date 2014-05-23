@@ -138,7 +138,7 @@ function drawProjectiles(){
 	ctx.strokeStyle="black";
 	for(index = 0;index < projectiles.length;index++){
 
-		//console.log('drawing projectile 1');
+		console.log('drawing projectile 1');
 		var current = projectiles[index];
 
 		ctx.moveTo(current.positionX,current.positionY);
