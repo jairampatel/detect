@@ -1,6 +1,8 @@
 TODO
 ----
 
+[] Moving barriers
+[] Increment score
 [] Show opponent on opposite side
 [] Slower projectile speed
 [] Slower fire speed

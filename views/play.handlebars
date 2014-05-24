@@ -1,6 +1,6 @@
 <script>
-var socket = io.connect('http://detect.herokuapp.com');
-//var socket = io.connect('http://localhost:3000');
+//var socket = io.connect('http://detect.herokuapp.com');
+var socket = io.connect('http://localhost:3000');
 
 socket.on('connect',function(data){
 		if(!connected){
@@ -68,7 +68,7 @@ function sendPosition(){
 			<div id="myNickname" class="playerName">
 				Player One
 			</div>
-			<div class="playerScore">
+			<div id="myScore" class="playerScore">
 				0
 			</div>
 		</div>
@@ -76,7 +76,7 @@ function sendPosition(){
 			<div id="opponentNickname" class="playerName">
 				Player Two
 			</div>
-			<div class="playerScore">
+			<div id="opponentScore" class="playerScore">
 				0
 			</div>
 		</div>

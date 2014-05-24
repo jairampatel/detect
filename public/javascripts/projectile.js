@@ -110,9 +110,66 @@ function projectileIntersectsWall(currentProjectile){
 	}
 	return false;
 }
-function projectileIntersectsPlayer(currentProjectile){
-	// TODO2
-	return false;
+
+function lineIntersectsCircle(currentProjectile,bodyX,bodyY){
+	// compute the euclidean distance between A and B
+
+	var Ax = currentProjectile.positionX;
+	var Ay = currentProjectile.positionY;
+	var Bx = currentProjectile.endPositionX;
+	var By = currentProjectile.endPositionY;
+
+	var distance = Math.sqrt(Math.pow((Bx-Ax),2)+Math.pow((By-Ay),2));
+
+	// compute the direction vector D from A to B
+	var Dx = (Bx-Ax)/distance;
+	var Dy = (By-Ay)/distance
+
+	// Now the line equation is x = Dx*t + Ax, y = Dy*t + Ay with 0 <= t <= 1.
+
+	// compute the value t of the closest point to the circle center (Cx, Cy)
+	var t = Dx*(bodyX-Ax) + Dy*(bodyY-Ay);
+
+	// This is the projection of C on the line from A to B.
+
+	// compute the coordinates of the point E on line and closest to C
+	var Ex = t*Dx+Ax
+	var Ey = t*Dy+Ay
+
+	// compute the euclidean distance from E to C
+	distance = Math.sqrt( Math.pow((Ex-bodyX),2) + Math.pow((Ey-bodyY),2) )
+
+	// test if the line intersects the circle
+	if( distance < BODY_RADIUS )
+	{
+		return true;
+	}
+
+	// else test if the line is tangent to circle
+	else if( distance == BODY_RADIUS )
+	    return true;
+
+	else
+	    return false;
+}
+function projectileIntersectsMe(currentProjectile) {
+    if(lineIntersectsCircle(currentProjectile,me.bodyX,me.bodyY)){
+    	return true;
+    }
+    return false;
+}
+
+function projectileIntersectsOpponent(currentProjectile) {
+	if(lineIntersectsCircle(currentProjectile,opponent.bodyX,opponent.bodyY)){
+		return true;
+	}
+	return false;   
+}
+
+function incrementScore(id){
+	var score = parseInt($(id).text());
+	score += 1;
+	$(id).html(score);
 }
 
 function handleProjectiles(){
@@ -125,8 +182,16 @@ function handleProjectiles(){
 			ids.splice(index,1);
 		}
 
-		if(projectileIntersectsPlayer(currentProjectile)){
-			// TODO2 notify player
+		if(projectileIntersectsMe(currentProjectile)){
+			projectiles.splice(index,1);
+			ids.splice(index,1);
+			incrementScore("#opponentScore");
+		}
+
+		if(projectileIntersectsOpponent(currentProjectile)){
+			projectiles.splice(index,1);
+			ids.splice(index,1);
+			incrementScore("#myScore");
 		}
 	}
 }
