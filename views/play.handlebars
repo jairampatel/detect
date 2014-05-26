@@ -25,6 +25,8 @@ socket.on('connect',function(data){
 		});
 
 		socket.on('opponentHit',function(data){
+			console.log('the oppoent got hit by : ' + data.projectileId);
+			removeProjectile(data.projectileId);
 			incrementScore("#myScore");
 		});
 });
@@ -37,9 +39,10 @@ function ready(){
 	startGame();
 }
 
-function sendHit(){
+function sendHit(id){
 	socket.emit('hit',{
-		room: '{{this.room}}'
+		room: '{{this.room}}',
+		projectileId: id
 	});
 }
 function sendPosition(){

@@ -118,11 +118,6 @@ function lineIntersectsCircle(currentProjectile,bodyX,bodyY){
 	var Bx = currentProjectile.endPositionX;
 	var By = currentProjectile.endPositionY;
 
-	console.log('line from: (' + Ax + ',' + Ay + ')');
-	console.log('line to: (' + Bx + ',' + By + ')');
-	console.log('circle: (' + bodyX + ',' + bodyY + ')');
-
-
 	var a = (Bx - Ax) * (Bx - Ax) + (By - Ay) * (By - Ay);
 	var b = 2 * ((Bx - Ax) * (Ax - bodyX) +(By - Ay) * (Ay - bodyY));
 	var cc = bodyX * bodyX + bodyY * bodyY + Ax * Ax + Ay * Ay - 2 * (bodyX * Ax + bodyY * Ay) - BODY_RADIUS * BODY_RADIUS;
@@ -180,6 +175,14 @@ function incrementScore(id){
 	$(id).html(score);
 }
 
+function removeProjectile(id){
+	var index;
+	index = ids.indexOf(id);
+	if(index >= 0){
+		projectiles.splice(index,1);
+		ids.splice(index,1);
+	}
+}
 function handleProjectiles(){
 	var index;
 	for(index = projectiles.length - 1;index >= 0;index--){
@@ -190,11 +193,12 @@ function handleProjectiles(){
 			ids.splice(index,1);
 		}
 		else if(projectileIntersectsMe(currentProjectile)){
+			var id = ids[index] * -1;
 			console.log('intersects me');
 			projectiles.splice(index,1);
-			 ids.splice(index,1);
+			ids.splice(index,1);
 			incrementScore("#opponentScore");
-			sendHit();
+			sendHit(id);
 		}
 /*
 		if(projectileIntersectsOpponent(currentProjectile)){
