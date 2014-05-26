@@ -272,6 +272,8 @@ function addListeners(){
 
 	$('#myCanvas').mousemove(function(event) {
 
+		changed = 1;
+
 		var parentOffset = canvas.getBoundingClientRect();
 
 		if(OFFSET_LEFT == -1)

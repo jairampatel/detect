@@ -64,6 +64,22 @@ io.sockets.on('connection', function(socket){
 	});
 	socket.on('disconnect', function (data) {
         console.log('1 client left');        
+        //TODO1 handle user disconnect
+    });
+    socket.on('hit', function (data) {
+        var room = data.room;
+        var opponent = -1;
+
+        if(rooms[room][0].id == socket.id){
+			opponent = 1;
+		}
+		else if(rooms[room][1].id == socket.id){
+			opponent = 0;
+		}
+		//console.log('opponent: ' + opponent);
+		if(opponent != -1){
+			io.sockets.socket(rooms[room][opponent].id).emit('opponentHit');
+		}
     });
 	socket.on('ready',function(data){
 		var room = data.room;

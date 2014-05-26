@@ -113,44 +113,52 @@ function projectileIntersectsWall(currentProjectile){
 
 function lineIntersectsCircle(currentProjectile,bodyX,bodyY){
 	// compute the euclidean distance between A and B
-
 	var Ax = currentProjectile.positionX;
 	var Ay = currentProjectile.positionY;
 	var Bx = currentProjectile.endPositionX;
 	var By = currentProjectile.endPositionY;
 
-	var distance = Math.sqrt(Math.pow((Bx-Ax),2)+Math.pow((By-Ay),2));
+	console.log('line from: (' + Ax + ',' + Ay + ')');
+	console.log('line to: (' + Bx + ',' + By + ')');
+	console.log('circle: (' + bodyX + ',' + bodyY + ')');
 
-	// compute the direction vector D from A to B
-	var Dx = (Bx-Ax)/distance;
-	var Dy = (By-Ay)/distance
 
-	// Now the line equation is x = Dx*t + Ax, y = Dy*t + Ay with 0 <= t <= 1.
-
-	// compute the value t of the closest point to the circle center (Cx, Cy)
-	var t = Dx*(bodyX-Ax) + Dy*(bodyY-Ay);
-
-	// This is the projection of C on the line from A to B.
-
-	// compute the coordinates of the point E on line and closest to C
-	var Ex = t*Dx+Ax
-	var Ey = t*Dy+Ay
-
-	// compute the euclidean distance from E to C
-	distance = Math.sqrt( Math.pow((Ex-bodyX),2) + Math.pow((Ey-bodyY),2) )
-
-	// test if the line intersects the circle
-	if( distance < BODY_RADIUS )
-	{
-		return true;
+	var a = (Bx - Ax) * (Bx - Ax) + (By - Ay) * (By - Ay);
+	var b = 2 * ((Bx - Ax) * (Ax - bodyX) +(By - Ay) * (Ay - bodyY));
+	var cc = bodyX * bodyX + bodyY * bodyY + Ax * Ax + Ay * Ay - 2 * (bodyX * Ax + bodyY * Ay) - BODY_RADIUS * BODY_RADIUS;
+	
+	var deter = b * b - 4 * a * cc;
+	if (deter <= 0 ) {
+		//inside = false;
+		return false;
+	} else {
+		var e = Math.sqrt(deter);
+		var u1 = ( (-1 * b) + e ) / (2 * a );
+		var u2 = ( (-1 * b) - e ) / (2 * a );
+		if ((u1 < 0 || u1 > 1) && (u2 < 0 || u2 > 1)) {
+			if ((u1 < 0 && u2 < 0) || (u1 > 1 && u2 > 1)) {
+				//result.inside = false;
+				return false;
+			} else {
+				//result.inside = true;
+				return true;
+			}
+		} else {
+			/*if (0 <= u2 && u2 <= 1) {
+				result.enter=Point.interpolate (A, B, 1 - u2);
+			}
+			if (0 <= u1 && u1 <= 1) {
+				result.exit=Point.interpolate (A, B, 1 - u1);
+			}
+			result.intersects = true;
+			if (result.exit != null && result.enter != null && result.exit.equals (result.enter)) {
+				result.tangent = true;
+			}*/
+			return true;	
+		}
 	}
-
-	// else test if the line is tangent to circle
-	else if( distance == BODY_RADIUS )
-	    return true;
-
-	else
-	    return false;
+	return false;
+	
 }
 function projectileIntersectsMe(currentProjectile) {
     if(lineIntersectsCircle(currentProjectile,me.bodyX,me.bodyY)){
@@ -181,18 +189,19 @@ function handleProjectiles(){
 			projectiles.splice(index,1);
 			ids.splice(index,1);
 		}
-
-		if(projectileIntersectsMe(currentProjectile)){
+		else if(projectileIntersectsMe(currentProjectile)){
+			console.log('intersects me');
 			projectiles.splice(index,1);
-			ids.splice(index,1);
+			 ids.splice(index,1);
 			incrementScore("#opponentScore");
+			sendHit();
 		}
-
+/*
 		if(projectileIntersectsOpponent(currentProjectile)){
 			projectiles.splice(index,1);
 			ids.splice(index,1);
 			incrementScore("#myScore");
-		}
+		}*/
 	}
 }
 
@@ -203,7 +212,7 @@ function drawProjectiles(){
 	ctx.strokeStyle="black";
 	for(index = 0;index < projectiles.length;index++){
 
-		console.log('drawing projectile 1');
+		//console.log('drawing projectile 1');
 		var current = projectiles[index];
 
 		ctx.moveTo(current.positionX,current.positionY);
@@ -217,6 +226,9 @@ function updateProjectiles(){
 		var current = projectiles[index];
 		projectiles[index].positionX += current.deltaX;
 		projectiles[index].positionY += current.deltaY;
+
+		projectiles[index].endPositionX += current.deltaX;
+		projectiles[index].endPositionY += current.deltaY;
 	}	
 	handleProjectiles();
 }
@@ -240,20 +252,18 @@ function getIds(){
 function getProjectiles(){
 	return projectiles;
 }
-function addProjectile(x,y,meX,myY){
+function addProjectile(x,y,meX,meY){
 
 	var deltaX = (x) - (meX);
-	var deltaY = (y) - (myY);
+	var deltaY = (y) - (meY);
 	var angle = Math.atan2(deltaY,deltaX);
 
-	var x = (BODY_RADIUS + PROJECTILE_LENGTH) * Math.cos(angle);
-	var y = (BODY_RADIUS + PROJECTILE_LENGTH) * Math.sin(angle);
+	var x = (BODY_RADIUS + 2) * Math.cos(angle);
+	var y = (BODY_RADIUS + 2) * Math.sin(angle);
 
 	var i = getId();
 	ids.push(i);
 	projectiles.push({
-		clickedX: x,
-		clickedY: y,
 		positionX: me.frontX,
 		positionY: me.frontY,
 		endPositionX: me.frontX + x,

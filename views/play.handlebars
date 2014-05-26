@@ -23,6 +23,10 @@ socket.on('connect',function(data){
 			setOpponent(data.bodyX,data.bodyY,data.frontX,data.frontY);
 			addProjectiles(data.ids, data.projectiles);
 		});
+
+		socket.on('opponentHit',function(data){
+			incrementScore("#myScore");
+		});
 });
 
 function ready(){
@@ -33,6 +37,11 @@ function ready(){
 	startGame();
 }
 
+function sendHit(){
+	socket.emit('hit',{
+		room: '{{this.room}}'
+	});
+}
 function sendPosition(){
 	var tempProj = [];
 	var tempId = [];
