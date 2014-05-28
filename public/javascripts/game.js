@@ -352,8 +352,9 @@ function update() {
 // The main game loop
 function main() {	
 
-	update(SPEED_MODIFIER);
 	render();
+	update(SPEED_MODIFIER);
+	
 
 	requestAnimationFrame(main);
 };

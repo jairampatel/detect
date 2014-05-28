@@ -183,12 +183,14 @@ function handleProjectiles(){
 		}
 
 		if(projectileIntersectsMe(currentProjectile)){
+			console.log('i got hit');
 			projectiles.splice(index,1);
 			ids.splice(index,1);
 			incrementScore("#opponentScore");
 		}
 
 		if(projectileIntersectsOpponent(currentProjectile)){
+			console.log('opponent got hit');
 			projectiles.splice(index,1);
 			ids.splice(index,1);
 			incrementScore("#myScore");
