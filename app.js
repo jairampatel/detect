@@ -119,11 +119,13 @@ io.sockets.on('connection', function(socket){
 		var room = data.room;
 		var me = -1;
 
-		if(rooms[room][0].id==socket.id){
-			me = 0;
-		}
-		else if(rooms[room][1].id==socket.id){
-			me = 1;
+		if(rooms[room] && rooms[room].length >= 1){
+			if(rooms[room][0] && rooms[room][0].id==socket.id){
+				me = 0;
+			}
+			else if(rooms[room][1] && rooms[room][1].id==socket.id){
+				me = 1;
+			}
 		}
 		if(me != -1){
 			//console.log('received: (' + data.bodyX + ',' + data.bodyY + ')');
@@ -134,15 +136,16 @@ io.sockets.on('connection', function(socket){
 			rooms[room][me].frontY = data.frontY;
 
 			var opponent = me ^ 1;
-
-			io.sockets.socket(rooms[room][opponent].id).emit('opponentLocation',{
-					bodyX: rooms[room][me].bodyX,
-					bodyY: rooms[room][me].bodyY,
-					frontX: rooms[room][me].frontX,
-					frontY: rooms[room][me].frontY,
-					projectiles: data.projectiles,
-					ids: data.ids
-			});
+			if(rooms[room].length > 1 && rooms[room][opponent]){
+				io.sockets.socket(rooms[room][opponent].id).emit('opponentLocation',{
+						bodyX: rooms[room][me].bodyX,
+						bodyY: rooms[room][me].bodyY,
+						frontX: rooms[room][me].frontX,
+						frontY: rooms[room][me].frontY,
+						projectiles: data.projectiles,
+						ids: data.ids
+				});
+			}
 		}
 	});
 });

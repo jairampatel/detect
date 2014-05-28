@@ -186,16 +186,37 @@ function canMove(direction){
 	}
 	return false;
 }
-function updateFront(){
-	var deltaX = mouseX - me.bodyX;
-	var deltaY = mouseY - me.bodyY;
+function reflectPoint(x,y){
+	var halfWidth = WIDTH / 2;
+	var halfHeight = HEIGHT / 2;
+
+	var difX = x - halfWidth;
+	var difY = y - halfHeight;
+
+	return {
+		x: halfWidth - difX,
+		y: halfHeight - difY
+	};
+
+}
+function getFront(bodyX,bodyY,mX,mY){
+	var deltaX = mX - bodyX;
+	var deltaY = mY - bodyY;
 	var angle = Math.atan2(deltaY,deltaX);
 
 	var x = (BODY_RADIUS-2) * Math.cos(angle);
 	var y = (BODY_RADIUS-2) * Math.sin(angle);
 
-	me.frontX = me.bodyX + x; 
-	me.frontY = me.bodyY + y;
+	return {
+		x: bodyX + x,
+		y: bodyY + y
+	}
+}
+function updateFront(){
+	var result = getFront(me.bodyX,me.bodyY,mouseX,mouseY);
+
+	me.frontX = result.x; 
+	me.frontY = result.y;
 }
 function updateBody(){
 	var delta = me.speed * SPEED_MODIFIER;
@@ -276,9 +297,9 @@ function addListeners(){
 
 		var parentOffset = canvas.getBoundingClientRect();
 
-		if(OFFSET_LEFT == -1)
+		//if(OFFSET_LEFT == -1)
 			OFFSET_LEFT = parentOffset.left; 
-		if(OFFSET_TOP == -1)
+		//if(OFFSET_TOP == -1)
 			OFFSET_TOP = parentOffset.top; 
 
 	   	var relX = event.pageX - OFFSET_LEFT;
@@ -286,7 +307,7 @@ function addListeners(){
 
 	   	mouseX = relX;
 		mouseY = relY;
-		//console.log('mouse: (' + mouseX + ',' + mouseY + ')');
+		console.log('mouse: (' + mouseX + ',' + mouseY + ')');
   		//var msg = 'mousemove() position - x : ' + relX + ', y : ' + relY;
 	  	//console.log(msg);
 	});
@@ -320,10 +341,26 @@ function addBarriers(){
 	});
 	barriers.push({
 		x:WIDTH * 4 / 6,
-		y:HEIGHT * 2 / 6,
+		y:HEIGHT * 3 / 6,
 		width:100,
 		height:20
 	});
+
+	var reflected1 = reflectPoint(barriers[0].x + 100,barriers[0].y + 20);
+	var reflected2 = reflectPoint(barriers[1].x + 100,barriers[1].y + 10);
+	barriers.push({
+		x: reflected1.x,
+		y: reflected1.y,
+		width: 100,
+		height: 20
+	});
+	barriers.push({
+		x: reflected2.x,
+		y: reflected2.y,
+		width: 100,
+		height: 20
+	});
+	/*
 	barriers.push({
 		x:WIDTH * 4 / 6,
 		y:HEIGHT * 4 / 6,
@@ -335,7 +372,7 @@ function addBarriers(){
 		y:HEIGHT * 5 / 6,
 		width:100,
 		height:20
-	});
+	});*/
 }
 
 function render(){
@@ -375,11 +412,16 @@ function initVariables(){
 		frontY: -1
 	};
 
+	
+	var front = getFront(canvas.width / 2, canvas.height / 6,
+								mouseX, mouseY);
+		
+	
 	opponent = {
-		bodyX: -1,
-		bodyY: -1,
-		frontX: -1,
-		frontY: -1
+		bodyX: canvas.width / 2,
+		bodyY: canvas.height / 6,
+		frontX: front.x,
+		frontY: front.y
 	};
 	addBarriers();
 }

@@ -194,10 +194,11 @@ function handleProjectiles(){
 		}
 		else if(projectileIntersectsMe(currentProjectile)){
 			var id = ids[index] * -1;
-			console.log('intersects me');
+
 			projectiles.splice(index,1);
 			ids.splice(index,1);
 			incrementScore("#opponentScore");
+			
 			sendHit(id);
 		}
 /*

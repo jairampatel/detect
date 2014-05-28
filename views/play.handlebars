@@ -25,7 +25,7 @@ socket.on('connect',function(data){
 		});
 
 		socket.on('opponentHit',function(data){
-			console.log('the oppoent got hit by : ' + data.projectileId);
+			//console.log('the oppoent got hit by : ' + data.projectileId);
 			removeProjectile(data.projectileId);
 			incrementScore("#myScore");
 		});
@@ -45,6 +45,7 @@ function sendHit(id){
 		projectileId: id
 	});
 }
+
 function sendPosition(){
 	var tempProj = [];
 	var tempId = [];
@@ -57,11 +58,14 @@ function sendPosition(){
 	for(index = 0;index < i.length;index++){
 		tempId.push(i[index] * -1);
 	}
+	var reflectBody = reflectPoint(getBodyX(),getBodyY());
+	var reflectFront = reflectPoint(getFrontX(),getFrontY());
+	console.log('sending my location: (' + reflectBody.x + ',' + reflectBody.y + ')')
 	socket.emit('myLocation',{
-		bodyX: getBodyX(),
-		bodyY: getBodyY(),
-		frontX: getFrontX(),
-		frontY: getFrontY(),
+		bodyX: reflectBody.x,
+		bodyY: reflectBody.y,
+		frontX: reflectFront.x,
+		frontY: reflectFront.y,
 		projectiles: tempProj,
 		ids: tempId,
 		room: '{{this.room}}'
