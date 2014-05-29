@@ -1,15 +1,22 @@
 TODO
 ----
+p1
 
 [] Moving barriers
-[] Increment score
-[] Show opponent on opposite side
+[X] Increment score
+[X] Show opponent on opposite side
 [] Slower projectile speed
 [] Slower fire speed
 [] Hide players if behind wall
 [] Fix projectile bugs
 	Multiple projectiles when sending
-[] Fix room bugs
+[X] Fix room bugs
 	Both players must join before playing
 	Allow users to play whenver they're ready
-[] Search for any open games ( p2 )
+[] Countdown to start game
+[] Stop game when N points are reached by either player
+
+p2
+
+
+[] Search for any open games
