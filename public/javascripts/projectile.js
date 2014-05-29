@@ -192,9 +192,9 @@ function handleProjectiles(){
 			projectiles.splice(index,1);
 			ids.splice(index,1);
 		}
-		else if(projectileIntersectsMe(currentProjectile)){
+		else if( ids[index] < 0 && projectileIntersectsMe(currentProjectile)){
 			var id = ids[index] * -1;
-			
+
 			projectiles.splice(index,1);
 			ids.splice(index,1);
 			incrementScore("#opponentScore");

@@ -2,8 +2,12 @@ var canvas;
 var ctx;
 var started;
 
-var opponentReady = false;
-var waitingForMe = false;
+var opponentReady;
+var waitingForMe;
+var countdownComplete;
+
+var countdown;
+var countdownCount;
 
 var WIDTH = 512;
 var HEIGHT = 512;
@@ -42,8 +46,39 @@ var OPPONENT = 1;
 
 var connected = 0;
 
+function playersReady(){
+	var result = (started && opponentReady);
+	console.log('started: ' + started);
+	console.log('opponentReady: ' + opponentReady);
+	console.log('players ready: ' + result);
+	return result;
+}
+function startCountdown(){
+
+	console.log('starting countdown');
+	countdown = setInterval(updateCountdown,1000);
+}
+function updateCountdown(){
+	console.log('count: ' + countdownCount);
+	if(countdownCount > 0){
+		//ctx.fillStyle="#FFFFFF";
+		//ctx.fillRect(WIDTH / 2,HEIGHT / 2,20,20);
+		ctx.fillStyle="#000000";
+		ctx.font="20px Georgia";
+		ctx.fillText("HELLO WORLD",WIDTH / 2, HEIGHT / 2);
+		countdownCount--;
+	}
+	else{
+		stopCountdown();
+	}
+}
+function stopCountdown(){
+	clearInterval(countdown);
+	countdownComplete = true;
+	addListeners();
+}
 function canStart(){
-	return (started && opponentReady);
+	return (started && opponentReady && countdownComplete);
 }
 function getBodyX(){
 	if(canStart())
@@ -78,6 +113,9 @@ function setOpponentReady(){
 	}
 	else{
 		opponentReady = true;
+	}
+	if(playersReady()){
+		startCountdown();
 	}
 }
 
@@ -307,7 +345,7 @@ function addListeners(){
 
 	   	mouseX = relX;
 		mouseY = relY;
-		console.log('mouse: (' + mouseX + ',' + mouseY + ')');
+		//console.log('mouse: (' + mouseX + ',' + mouseY + ')');
   		//var msg = 'mousemove() position - x : ' + relX + ', y : ' + relY;
 	  	//console.log(msg);
 	});
@@ -405,6 +443,13 @@ function initVariables(){
 	mouseX = canvas.width/2;
 	mouseY = canvas.height/2 - 20;
 
+	started = false;
+	opponentReady = false;
+	waitingForMe = false;
+	countdownComplete = false;
+
+	countdownCount = 3;
+
 	me = {
 		speed: 128, // movement in pixels per second
 		bodyX: -1,
@@ -430,7 +475,7 @@ function initVariables(){
 function setUp(){
 	createCanvas();
 	initVariables();
-	addListeners();
+	
 
 	setMePosition(canvas.width/2, canvas.height*5/6);
 	drawPlayer();
@@ -439,6 +484,9 @@ function setUp(){
 	started = true;
 	if(waitingForMe){
 		opponentReady = true;
+	}
+	if(playersReady()){
+		startCountdown();
 	}
 }
 

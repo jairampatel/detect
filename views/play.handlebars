@@ -13,7 +13,7 @@ socket.on('connect',function(data){
 			setName("#myNickname",'{{this.nickname}}');
 		}
 		socket.on('opponentReady',function(data){
-			console.log('setting opponent nick: ' + data.nickname);
+			console.log('opponent is ready: ' + data.nickname);
 			setName("#opponentNickname",data.nickname);
 			setOpponentReady();
 		});
@@ -60,7 +60,6 @@ function sendPosition(){
 	}
 	var reflectBody = reflectPoint(getBodyX(),getBodyY());
 	var reflectFront = reflectPoint(getFrontX(),getFrontY());
-	console.log('sending my location: (' + reflectBody.x + ',' + reflectBody.y + ')')
 	socket.emit('myLocation',{
 		bodyX: reflectBody.x,
 		bodyY: reflectBody.y,
