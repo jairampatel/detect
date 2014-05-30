@@ -13,7 +13,7 @@ p1
 [X] Fix room bugs
 	Both players must join before playing
 	Allow users to play whenver they're ready
-[] Countdown to start game
+[X] Countdown to start game
 [] Stop game when N points are reached by either player
 
 p2
