@@ -1,11 +1,7 @@
 var canvas;
 var ctx;
-var started;
 
-var opponentReady;
-var waitingForMe;
 var countdownComplete;
-
 var countdown;
 var countdownCount;
 
@@ -46,13 +42,7 @@ var OPPONENT = 1;
 
 var connected = 0;
 
-function playersReady(){
-	var result = (started && opponentReady);
-	console.log('started: ' + started);
-	console.log('opponentReady: ' + opponentReady);
-	console.log('players ready: ' + result);
-	return result;
-}
+
 function startCountdown(){
 
 	console.log('starting countdown');
@@ -78,7 +68,7 @@ function stopCountdown(){
 	addListeners();
 }
 function canStart(){
-	return (started && opponentReady && countdownComplete);
+	return countdownComplete;
 }
 function getBodyX(){
 	if(canStart())
@@ -106,17 +96,6 @@ function getFrontY(){
 
 function setName(id,nickname){
 	$(id).html(nickname);
-}
-function setOpponentReady(){
-	if(!started){
-		waitingForMe = true;
-	}
-	else{
-		opponentReady = true;
-	}
-	if(playersReady()){
-		startCountdown();
-	}
 }
 
 function setOpponent(bodyX, bodyY, frontX, frontY){
@@ -443,11 +422,6 @@ function initVariables(){
 	mouseX = canvas.width/2;
 	mouseY = canvas.height/2 - 20;
 
-	started = false;
-	opponentReady = false;
-	waitingForMe = false;
-	countdownComplete = false;
-
 	countdownCount = 3;
 
 	me = {
@@ -480,18 +454,10 @@ function setUp(){
 	setMePosition(canvas.width/2, canvas.height*5/6);
 	drawPlayer();
 	drawBarriers();
-
-	started = true;
-	if(waitingForMe){
-		opponentReady = true;
-	}
-	if(playersReady()){
-		startCountdown();
-	}
 }
 
 function startGame(){
-	if(!started){
+	if(!canStart()){
 		setUp();
 		main();
 	}

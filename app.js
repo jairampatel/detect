@@ -59,7 +59,8 @@ io.sockets.on('connection', function(socket){
 			bodyX: -1,
 			bodyY: -1,
 			frontX: -1,
-			frontY: -1
+			frontY: -1,
+			ready: false
 		});
 	});
 	socket.on('disconnect', function (data) {
@@ -85,31 +86,31 @@ io.sockets.on('connection', function(socket){
 		}
     });
 	socket.on('ready',function(data){
+		
 		var room = data.room;
 		var opponent = -1;
 		var me = -1;
 
-		if(rooms[room].length > 1){
-			if(rooms[room][0].id == socket.id){
-				opponent = 1;
-			}
-			else if(rooms[room][1].id == socket.id){
-				opponent = 0;
-			}
-			//console.log('opponent: ' + opponent);
-			if(opponent != -1){
-				me = opponent ^ 1;
-				console.log('me: ' + me);
-				console.log('opponent: ' + opponent);
-				console.log('my nickname: ' + rooms[room][me].nickname);
-				console.log('opponent nickname: ' + rooms[room][opponent].nickname);
-				io.sockets.socket(rooms[room][opponent].id).emit('opponentReady',{
-					nickname: rooms[room][me].nickname 
-				});
+		if(rooms[room][0].id == socket.id){
+			me = 0;
+		}
+		else if(rooms[room][1] && rooms[room][1].id == socket.id){
+			me = 1;
+		}
 
-				/*io.sockets.socket(rooms[room][me].id).emit('opponentReady',{
-					nickname: rooms[room][opponent].nickname 
-				});*/
+		//console.log('opponent: ' + opponent);
+		if(me != -1){
+			opponent = me ^ 1;
+			rooms[room][me].ready = true;
+		}
+		if(rooms[room].length > 1){
+			if(rooms[room][me].ready && rooms[room][opponent].ready){
+				io.sockets.socket(rooms[room][me].id).emit('startGame',{
+					nickname: rooms[room][opponent].nickname
+				});
+				io.sockets.socket(rooms[room][opponent].id).emit('startGame',{
+					nickname: rooms[room][me].nickname
+				});
 			}
 		}
 	});

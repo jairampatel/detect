@@ -12,10 +12,10 @@ socket.on('connect',function(data){
 
 			setName("#myNickname",'{{this.nickname}}');
 		}
-		socket.on('opponentReady',function(data){
+		socket.on('startGame',function(data){
 			console.log('opponent is ready: ' + data.nickname);
 			setName("#opponentNickname",data.nickname);
-			setOpponentReady();
+			startCountdown();
 		});
 		
 
@@ -40,6 +40,7 @@ function ready(){
 }
 
 function sendHit(id){
+	console.log('got hit');
 	socket.emit('hit',{
 		room: '{{this.room}}',
 		projectileId: id

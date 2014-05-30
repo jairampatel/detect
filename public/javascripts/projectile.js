@@ -192,7 +192,8 @@ function handleProjectiles(){
 			projectiles.splice(index,1);
 			ids.splice(index,1);
 		}
-		else if( ids[index] < 0 && projectileIntersectsMe(currentProjectile)){
+		else if( projectileIntersectsMe(currentProjectile)){
+			console.log('i got hit');
 			var id = ids[index] * -1;
 
 			projectiles.splice(index,1);
