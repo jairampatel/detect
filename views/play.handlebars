@@ -70,8 +70,8 @@ function sendPosition(){
 			positionY: start.y,
 			endPositionX: end.x,
 			endPositionY: end.y,
-			deltaX: current.deltaX,
-			deltaY: current.deltaY
+			deltaX: -1 * current.deltaX,
+			deltaY: -1 * current.deltaY
 
 		}
 		tempProj.push(newItem);
@@ -102,7 +102,7 @@ function sendPosition(){
 	<div id="wrapperPlayers">
 		<div class="player">
 			<div id="myNickname" class="playerName">
-				Player One
+				{{nickname}}
 			</div>
 			<div id="myScore" class="playerScore">
 				0
