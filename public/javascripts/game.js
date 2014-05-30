@@ -393,7 +393,7 @@ function addBarriers(){
 }
 
 function render(){
-	ctx.clearRect(0, 0, WIDTH, HEIGHT);
+	//ctx.clearRect(0, 0, WIDTH, HEIGHT);
 	drawPlayer();
 	drawOpponent();
 	drawBarriers();
