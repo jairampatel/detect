@@ -1,6 +1,7 @@
 var canvas;
 var ctx;
 
+var countInProcess;
 var countdownComplete;
 var countdown;
 var countdownCount;
@@ -44,18 +45,17 @@ var connected = 0;
 
 
 function startCountdown(){
-
 	console.log('starting countdown');
+	countInProcess = true;
 	countdown = setInterval(updateCountdown,1000);
 }
 function updateCountdown(){
 	console.log('count: ' + countdownCount);
 	if(countdownCount > 0){
-		//ctx.fillStyle="#FFFFFF";
-		//ctx.fillRect(WIDTH / 2,HEIGHT / 2,20,20);
+		ctx.clearRect(WIDTH / 2 - 20,HEIGHT / 2 - 20,100,100);
 		ctx.fillStyle="#000000";
 		ctx.font="20px Georgia";
-		ctx.fillText("HELLO WORLD",WIDTH / 2, HEIGHT / 2);
+		ctx.fillText(countdownCount,WIDTH / 2, HEIGHT / 2);
 		countdownCount--;
 	}
 	else{
@@ -65,6 +65,7 @@ function updateCountdown(){
 function stopCountdown(){
 	clearInterval(countdown);
 	countdownComplete = true;
+	countInProcess = false;
 	addListeners();
 }
 function canStart(){
@@ -393,11 +394,14 @@ function addBarriers(){
 }
 
 function render(){
-	//ctx.clearRect(0, 0, WIDTH, HEIGHT);
-	drawPlayer();
-	drawOpponent();
-	drawBarriers();
-	drawProjectiles(); // projectile.js
+	if(!countInProcess){
+		ctx.clearRect(0, 0, WIDTH, HEIGHT);
+		
+		drawPlayer();
+		drawOpponent();
+		drawBarriers();
+		drawProjectiles(); // projectile.js
+	}
 }
 
 function update() {
@@ -423,6 +427,7 @@ function initVariables(){
 	mouseY = canvas.height/2 - 20;
 
 	countdownCount = 3;
+	countInProcess = false;
 
 	me = {
 		speed: 128, // movement in pixels per second
