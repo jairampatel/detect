@@ -3,6 +3,8 @@ var PROJECTILE_LENGTH = 12;
 var projectiles;
 var id = 0;
 var ids = [];
+var allIds = [];
+
 
 
 function linesIntersect(x1, y1, x2, y2, x3, y3, x4, y4){
@@ -243,7 +245,8 @@ function updateProjectiles(){
 function addProjectiles(idArray, projArray){
 	var i;
 	for(i = 0;i < idArray.length;i++){
-		if(ids.indexOf(idArray[i]) < 0){
+		if(allIds.indexOf(idArray[i]) < 0){
+			allIds.push(idArray[i]);
 			ids.push(idArray[i]);
 			projectiles.push(projArray[i]);
 		}
@@ -269,6 +272,7 @@ function addProjectile(x,y,meX,meY){
 	var y = (BODY_RADIUS + 2) * Math.sin(angle);
 
 	var i = getId();
+	allIds.push(i);
 	ids.push(i);
 	projectiles.push({
 		positionX: me.frontX,
