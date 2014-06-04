@@ -33,11 +33,7 @@ var opponent;
 
 
 var barriers;
-var body = ["#00331F","#0066FF"];
-var bodyStroke = ["#003300","#0000FF"];
 
-var front = ["#FFFF66","#FFFF66"];
-var frontStroke = ["#FFFF66","#FFFF66"];
 var ME = 0;
 var OPPONENT = 1;
 
@@ -68,43 +64,17 @@ function stopCountdown(){
 	countInProcess = false;
 	addListeners();
 }
+
+function incrementScore(id){
+	var score = parseInt($(id).text());
+	score += 1;
+	$(id).html(score);
+}
+
 function canStart(){
 	return countdownComplete;
 }
-function getBodyX(){
-	if(canStart())
-		return me.bodyX;
-	return 0;
-}
 
-function getBodyY(){
-	if(canStart())
-		return me.bodyY;
-	return 0;
-}
-
-function getFrontX(){
-	if(canStart())
-		return me.frontX;
-	return 0;
-}
-
-function getFrontY(){
-	if(canStart())
-		return me.frontY;
-	return 0;
-}
-
-function setName(id,nickname){
-	$(id).html(nickname);
-}
-
-function setOpponent(bodyX, bodyY, frontX, frontY){
-	opponent.bodyX = bodyX;
-	opponent.bodyY = bodyY;
-	opponent.frontX = frontX;
-	opponent.frontY = frontY;
-}
 function drawOpponent(){
 	if(canStart()){
 		drawCircle(opponent.bodyX,opponent.bodyY,BODY_RADIUS,0,END,body[OPPONENT],bodyStroke[OPPONENT]);
@@ -122,156 +92,6 @@ function drawBarriers(){
 
 function fire(x,y){
 	addProjectile(x,y,me.frontX,me.frontY);
-}
-function touchingWall(direction){
-	switch(direction){
-		case UP:
-			if(me.bodyY - (me.speed * SPEED_MODIFIER) - BODY_RADIUS >= 0)
-				return false;
-			break;
-		case DOWN:
-			if(me.bodyY + (me.speed * SPEED_MODIFIER) + BODY_RADIUS < HEIGHT)
-				return false;
-			break;
-		case LEFT:
-			if(me.bodyX - (me.speed * SPEED_MODIFIER) - BODY_RADIUS >= 0)
-				return false;
-			break;
-		case RIGHT:
-			if(me.bodyX + (me.speed * SPEED_MODIFIER) + BODY_RADIUS < WIDTH){
-				return false;
-			}
-			break;
-	}
-	return true;
-}
-// limits value to the range min..max
-function clamp(val, min, max) {
-    return Math.max(min, Math.min(max, val));
-}
- 
-
-function bodyIntersectsBarrier(barrier,direction){
-	var centerX = barrier.x + (barrier.width / 2);
-	var centerY = barrier.y + (barrier.height / 2);
-	
-	// Find the closest point to the circle within the rectangle
-	// Assumes axis alignment! ie rect must not be rotated
-	var closestX;
-	var closestY;
-	
-	var deltaX = 0;
-	var deltaY = 0;
-
-	switch(direction){
-		case UP:
-			deltaY = -1 * (me.speed * SPEED_MODIFIER);
-		break;
-		case DOWN:
-			deltaY = (me.speed * SPEED_MODIFIER);
-		break;
-		case LEFT:
-			deltaX = -1 * (me.speed * SPEED_MODIFIER);
-		break;
-		case RIGHT:
-			deltaX = (me.speed * SPEED_MODIFIER);
-		break;
-	}
-	closestX = clamp(me.bodyX + deltaX, barrier.x, barrier.x + barrier.width);
-	closestY = clamp(me.bodyY + deltaY, barrier.y, barrier.y + barrier.height);
-
-	// Calculate the distance between the circle's center and this closest point
-	var distanceX = me.bodyX + deltaX - closestX;
-	var distanceY = me.bodyY + deltaY - closestY;
-	 
-	// If the distance is less than the circle's radius, an intersection occurs
-	var distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
-
-	return distanceSquared < (BODY_RADIUS * BODY_RADIUS);
-}
-function touchingBarriers(direction){
-	var index;
-	for(index = 0;index < barriers.length;index++){
-		if(bodyIntersectsBarrier(barriers[index],direction)){
-			return true;
-		}
-	}
-	return false;
-}
-function canMove(direction){
-	if(!touchingWall(direction) && !touchingBarriers(direction)){
-		return true;
-	}
-	return false;
-}
-function reflectPoint(x,y){
-	var halfWidth = WIDTH / 2;
-	var halfHeight = HEIGHT / 2;
-
-	var difX = x - halfWidth;
-	var difY = y - halfHeight;
-
-	return {
-		x: halfWidth - difX,
-		y: halfHeight - difY
-	};
-
-}
-function getFront(bodyX,bodyY,mX,mY){
-	var deltaX = mX - bodyX;
-	var deltaY = mY - bodyY;
-	var angle = Math.atan2(deltaY,deltaX);
-
-	var x = (BODY_RADIUS-2) * Math.cos(angle);
-	var y = (BODY_RADIUS-2) * Math.sin(angle);
-
-	return {
-		x: bodyX + x,
-		y: bodyY + y
-	}
-}
-function updateFront(){
-	var result = getFront(me.bodyX,me.bodyY,mouseX,mouseY);
-
-	me.frontX = result.x; 
-	me.frontY = result.y;
-}
-function updateBody(){
-	var delta = me.speed * SPEED_MODIFIER;
-	if ((87 in keysDown || 38 in keysDown)) { // up
-		if(canMove(UP)){
-			me.bodyY -= delta;
-			changed = 1;
-		}
-	}
-	if ((83 in keysDown || 40 in keysDown)) { // down
-		if(canMove(DOWN)){
-			me.bodyY += delta;
-			changed = 1;
-		}
-	}
-	if ((65 in keysDown || 37 in keysDown)) { // left
-		if(canMove(LEFT)){
-			me.bodyX -= delta;
-			changed = 1;
-		}
-	}
-	if ((68 in keysDown || 39 in keysDown)) { // right
-		if(canMove(RIGHT)){
-			me.bodyX += delta;
-			changed = 1;
-		}
-	}
-	//console.log('(' + me.bodyX + ',' + me.bodyY + ')');
-}
-
-function updatePlayer(){
-	updateBody();
-	updateFront();
-	if(changed){
-		changed = 0;
-		sendPosition();
-	}
 }
 
 function drawCircle(x,y,radius,start,end,fill,stroke){
@@ -292,11 +112,6 @@ function drawFront(){
 function drawPlayer(){
 	drawCircle(me.bodyX,me.bodyY,BODY_RADIUS,0,END,body[ME],bodyStroke[ME]);
 	drawFront();
-}
-
-function setMePosition(x,y){
-	me.bodyX = x;
-	me.bodyY = y;
 }
 
 function addListeners(){
@@ -357,27 +172,27 @@ function addBarriers(){
 		width:100,
 		height:20
 	});
-	barriers.push({
+	/*barriers.push({
 		x:WIDTH * 4 / 6,
 		y:HEIGHT * 3 / 6,
 		width:100,
 		height:20
-	});
+	});*/
 
 	var reflected1 = reflectPoint(barriers[0].x + 100,barriers[0].y + 20);
-	var reflected2 = reflectPoint(barriers[1].x + 100,barriers[1].y + 10);
+	//var reflected2 = reflectPoint(barriers[1].x + 100,barriers[1].y + 10);
 	barriers.push({
 		x: reflected1.x,
 		y: reflected1.y,
 		width: 100,
 		height: 20
 	});
-	barriers.push({
+	/*barriers.push({
 		x: reflected2.x,
 		y: reflected2.y,
 		width: 100,
 		height: 20
-	});
+	});*/
 	/*
 	barriers.push({
 		x:WIDTH * 4 / 6,

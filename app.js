@@ -77,11 +77,8 @@ io.sockets.on('connection', function(socket){
 		
 		var roomParam = data.room;
 		var opponent = -1;
-		
-		//while(rooms[room].length < 1){} // TODO do this another way - if user clicks start before joinRoom is received
 
 		var result = room.ready(roomParam,socket.id);
-
 		
 		if(result.ready == true){
 			io.sockets.socket(result.meId).emit('startGame',{

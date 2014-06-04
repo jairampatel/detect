@@ -2,17 +2,17 @@ var room = exports;
 
 var rooms = {};
 
-room.joinRoom = function(room,nickname,id){
-	if(!rooms[room]){
-		rooms[room] = []
-	}
-	//TODO 2 Allow others can view game. Limit moves to the first 2
-	if(rooms[room].length > 0){
-		// check if the player has already been added
-	}
-	else{
+function isPresent(room,id){
+	var index;
 
+	for(index = 0;index < rooms[room].length;index++){
+		if(rooms[room][index].id == id){
+			return true;
+		}
 	}
+	return false;
+}
+function addToRoom(room,id,nickname){
 	rooms[room].push({
 		id: id,
 		nickname: nickname, 
@@ -22,6 +22,21 @@ room.joinRoom = function(room,nickname,id){
 		frontY: -1,
 		ready: false
 	});
+}
+room.joinRoom = function(room,nickname,id){
+	if(!rooms[room]){
+		rooms[room] = []
+	}
+	//TODO 2 Allow others can view game. Limit moves to the first 2
+	if(rooms[room].length > 0){		
+		if(!isPresent(room,id)){
+			addToRoom(room,id,nickname);
+		}
+	}
+	else{
+		addToRoom(room,id,nickname);
+	}
+	
 }
 
 room.hit = function(room,id){
@@ -58,7 +73,7 @@ room.ready = function(room,id){
 		rooms[room][me].ready = true;
 	
 
-		if(rooms[room][me].ready && rooms[room][opponent].ready){
+		if(rooms[room][opponent] && rooms[room][me].ready && rooms[room][opponent].ready){
 			return {
 				ready: true,
 				meId: rooms[room][me].id,

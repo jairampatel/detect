@@ -171,12 +171,6 @@ function projectileIntersectsOpponent(currentProjectile) {
 	return false;   
 }
 
-function incrementScore(id){
-	var score = parseInt($(id).text());
-	score += 1;
-	$(id).html(score);
-}
-
 function removeProjectile(id){
 	var index;
 	index = ids.indexOf(id);
